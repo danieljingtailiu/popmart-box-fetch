@@ -145,7 +145,7 @@ Set `AUTO_CHECKOUT = True` for automatic purchasing:
 Choose your target character in config.py:
 - **"Space Molly"** - Futuristic space-themed collectibles
 - **"LABUBU"** ⚠️ - Popular rabbit-like character series (high bot competition)
-- **"The Monsters"** - Cute monster-themed figures
+- **"Hirono"** - Cute Hirono figures
 - **"Molly"** ✅ - Classic Molly character variations (recommended)
 - **"Twinkle Twinkle"** ✅ - Sparkly magical-themed collection (recommended)
 
@@ -255,13 +255,13 @@ Choose your target character in config.py:
 
 ## 📋 Supported Characters
 
-| Character | Collection URL | Description | Bot Competition Level |
-|-----------|---------------|-------------|----------------------|
-| **Space Molly** | `/search/SPACE%20MOLLY` | Futuristic space-themed collectibles | 🟡 Medium |
-| **LABUBU** | `/search/LABUBU` | Popular rabbit-like character series | 🔴 **Very High** |
-| **The Monsters** | `/search/THE%20MONSTERS` | Cute monster-themed figures | 🟡 Medium |
-| **Molly** | `/search/MOLLY` | Classic Molly character variations | 🟢 **Low-Medium** |
-| **Twinkle Twinkle** | `/search/TWINKLE%20TWINKLE` | Sparkly magical-themed collection | 🟢 **Low-Medium** |
+| Character           | Collection URL              | Description                          | Bot Competition Level |
+|---------------------|-----------------------------|--------------------------------------|----------------------|
+| **Space Molly**     | `/search/SPACE%20MOLLY`     | Futuristic space-themed collectibles | 🟡 Medium |
+| **LABUBU**          | `/search/LABUBU`            | Popular rabbit-like character series | 🔴 **Very High** |
+| **Hirono**          | `/search/Hirono`            | Cute Hirono figures                  | 🟡 Medium |
+| **Molly**           | `/search/MOLLY`             | Classic Molly character variations   | 🟢 **Low-Medium** |
+| **Twinkle Twinkle** | `/search/TWINKLE%20TWINKLE` | Sparkly magical-themed collection    | 🟢 **Low-Medium** |
 
 ## ⚠️ Important Notes
 
