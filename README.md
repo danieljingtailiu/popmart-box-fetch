@@ -6,13 +6,46 @@
 [![SeleniumBase](https://img.shields.io/badge/SeleniumBase-4.0+-green.svg)](https://seleniumbase.io)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-## ⚠️ Important Disclaimer
+## ⚠️ Important Disclaimer & Bot Competition Reality
 
-**This bot is designed for moderate competition scenarios and works best with less popular character collections like Molly or Twinkle Twinkle. For highly contested releases (especially LABUBU), this browser-based bot cannot compete with advanced bots that have reverse-engineered PopMart's mobile API and use direct API calls for instant purchasing. Those API-based bots have significant speed advantages and will typically secure items faster than any browser automation tool.**
+### 🚨 **Understanding the Competition Landscape**
 
-**Recommended for**: Molly, Twinkle Twinkle, Space Molly, Hirono
+This browser-based automation tool operates within realistic limitations and is designed for moderate competition scenarios. Here's what you need to know:
 
-**Not recommended for**: LABUBU releases or other high-demand drops with heavy bot competition
+#### **🔴 High Competition Releases (LABUBU, Limited Drops)**
+- **API-Based Bots Dominate**: Advanced scalpers use reverse-engineered mobile API endpoints
+- **No FECU Token Required**: Mobile APIs bypass the encrypted FECU token system used by web browsers
+- **Sub-Second Speed**: Direct API calls achieve checkout times under 1 second
+- **Browser Disadvantage**: This tool cannot compete with API-based bots on speed alone
+
+#### **🟢 Recommended Target Collections**
+- **Molly Series**: Lower bot competition, higher success rates
+- **Twinkle Twinkle**: Less targeted by scalpers, good availability windows
+- **Space Molly**: Moderate competition, decent success chances
+- **Hirono*: Variable competition depending on specific releases
+
+#### **🔧 Technical Reality**
+```
+Web Browser Method (This Bot):
+├── Requires DOM parsing and rendering
+├── Subject to FECU token encryption
+├── ~2-5 second checkout times
+└── Human-like interaction patterns
+
+Mobile API Method (Scalper Bots):
+├── Direct API endpoint access
+├── No FECU token requirements
+├── ~0.5-1 second checkout times
+└── Unlimited concurrent requests
+```
+
+### **💡 When This Bot Works Best**
+- **Restocks of existing items** (less bot attention)
+- **Non-LABUBU character releases** (lower competition)
+- **Regional availability differences** (timing advantages)
+- **Monitoring and alerts** (even if manual checkout needed)
+
+---
 
 ## 🎯 Overview
 
@@ -78,9 +111,9 @@ AUTO_CHECKOUT = True  # True for auto-purchase, False for monitoring only
 FIRST_NAME = "John"
 LAST_NAME = "Doe"
 ADDRESS = "123 Main Street"
-CITY = "Toronto"
-ZIP_CODE = "A1B 1A1"
-PHONE_NUMBER = "111-222-3333"
+CITY = "Vancouver"
+ZIP_CODE = "V6B 1A1"
+PHONE_NUMBER = "604-555-0123"
 
 # Payment details
 CREDIT_CARD_NUMBER = "4111111111111111"
@@ -140,7 +173,7 @@ Choose your target character in config.py:
 🔄 Loading products (Advanced Scroll + Pagination)...
 
 📦 PRODUCT DISCOVERY SUMMARY
-┌──────────────────────────────────────────────────┐
+┌──────────────────────────────────────────────────────────────────────┐
 │ Total Products Found: 37                         │
 │ Search Method: Advanced Scroll + Pagination      │
 │ Duplicate Removal: ✅ Enabled                   │
@@ -284,3 +317,7 @@ If you encounter any issues or have questions:
 - **Open Source Contributors**: For continuous improvements and bug fixes
 
 ---
+
+**⭐ If this project helped you secure your favorite PopMart collectibles, please consider giving it a star!**
+
+*Built with ❤️ for the PopMart collecting community*
