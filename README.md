@@ -22,7 +22,7 @@ This browser-based automation tool operates within realistic limitations and is 
 - **Molly Series**: Lower bot competition, higher success rates
 - **Twinkle Twinkle**: Less targeted by scalpers, good availability windows
 - **Space Molly**: Moderate competition, decent success chances
-- **Hirono: Variable competition depending on specific releases
+- **Hirono**: Variable competition depending on specific releases
 
 #### **🔧 Technical Reality**
 ```
