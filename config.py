@@ -53,3 +53,4 @@ AUTO_CHECKOUT_INTERVAL = 10  # Very fast auto-checkout - every 10 seconds
 # Delay ranges for human-like behavior (in seconds)
 MIN_DELAY = 0.3
 MAX_DELAY = 1.0
+

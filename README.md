@@ -1,6 +1,6 @@
-# 🤖 PopMart Box Fetch
+# 🤖 PopMart Unified Bot
 
-**Professional automated monitoring and purchasing system for PopMart collectibles**
+**Smart automated monitoring and purchasing system for PopMart collectibles - supports both regular products and PopNow sets**
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
 [![SeleniumBase](https://img.shields.io/badge/SeleniumBase-4.0+-green.svg)](https://seleniumbase.io)
@@ -49,33 +49,33 @@ Mobile API Method (Scalper Bots):
 
 ## 🎯 Overview
 
-PopMart Box Fetch is a sophisticated automation tool designed to monitor and purchase limited-edition collectibles from PopMart. Built with advanced web scraping techniques and intelligent stock monitoring, this bot ensures you never miss out on your favorite character releases.
+PopMart Unified Bot is a smart automation tool that automatically detects and monitors both regular PopMart products and PopNow mystery box sets. Using advanced monitoring techniques, it watches for restocks and handles the complete checkout process for both product types.
 
 ## ✨ Key Features
 
-### 🔥 **Advanced Product Discovery**
-- **Multi-Character Support**: Monitor Space Molly, LABUBU, The Monsters, Molly, and Twinkle Twinkle
-- **Intelligent Scrolling**: Advanced pagination with infinite scroll detection
-- **Duplicate Prevention**: Smart filtering to avoid redundant product entries
-- **Real-Time Updates**: Live product availability tracking
+### 🧠 **Smart Auto-Detection**
+- **Unified System**: One bot handles both regular products and PopNow sets
+- **Auto-Detection**: Automatically identifies product type from URL and page elements
+- **Multi-Product Support**: Monitor any combination of regular and PopNow products
+- **Real-Time Monitoring**: High-speed detection using multiple monitoring methods
 
 ### 🚀 **Lightning-Fast Checkout**
-- **Auto-Login**: Persistent session management with cookie storage
-- **Smart Form Filling**: Automatic population of shipping and payment details
-- **Purchase Confirmation**: User-controlled buying with confirmation prompts
-- **Error Recovery**: Robust error handling and retry mechanisms
+- **Dual Browser Strategy**: Separate browsers for monitoring and checkout
+- **PopNow Optimization**: Specialized checkout flow for PopNow mystery boxes
+- **Speed Optimized**: Sub-2 second checkout times for PopNow products
+- **Auto-Login**: Persistent session management with pre-warmed browsers
 
-### 📊 **Professional Interface**
-- **Real-Time Progress Bars**: Visual feedback during product scanning
-- **Detailed Reporting**: Comprehensive session summaries and statistics
-- **Clean Output**: Professional console interface with organized data display
-- **Session Tracking**: Monitor runtime, cycles, and success rates
+### 📊 **Professional Monitoring**
+- **High-Speed Detection**: MutationObserver + Polling + Animation Frame monitoring
+- **Restock Alerts**: Instant detection of stock availability changes
+- **Status Updates**: Real-time check counts and availability status
+- **Error Recovery**: Robust error handling and monitor reinjection
 
-### 🛡️ **Security & Reliability**
-- **Anti-Detection**: Browser fingerprint masking and human-like behavior
-- **Session Persistence**: Secure cookie management and login state preservation
-- **Rate Limiting**: Intelligent delays to prevent IP blocking
-- **Popup Handling**: Automatic dismissal of modal dialogs and interruptions
+### 🛡️ **Stealth & Reliability**
+- **Human-Like Behavior**: Light scrolling and natural interaction patterns
+- **Anti-Detection**: Advanced browser fingerprint masking
+- **Session Management**: Secure cookie handling and login persistence
+- **Dual Browser Safety**: Isolated monitoring and checkout processes
 
 ## 🛠️ Installation
 
@@ -122,7 +122,7 @@ EXPIRATION_DATE = "1228"  # MMYY format
 SECURITY_CODE_CVV = "123"
 ```
 
-4. **Run the bot**
+4. **Run the unified bot**
 ```bash
 python main.py
 ```
