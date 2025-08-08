@@ -225,4 +225,4 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 **🎯 Built for PopMart collectors who want a reliable, intelligent bot that actually works**
 
-*Remember: This bot gives you an edge, but success still requires timing, luck, and quick payment completion!*
+*Remember: payment completion is manual for privacy, ensure the speed to enter payment info is fast or have your payment info pre saved*
