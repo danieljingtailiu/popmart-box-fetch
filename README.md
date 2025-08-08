@@ -1,323 +1,228 @@
 # 🤖 PopMart Unified Bot
 
-**Smart automated monitoring and purchasing system for PopMart collectibles - supports both regular products and PopNow sets**
+**Intelligent automated monitoring and purchasing system for PopMart collectibles**
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
-[![SeleniumBase](https://img.shields.io/badge/SeleniumBase-4.0+-green.svg)](https://seleniumbase.io)
+[![SeleniumBase](https://img.shields.io/badge/SeleniumBase-Latest-green.svg)](https://seleniumbase.io)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-## ⚠️ Important Disclaimer & Bot Competition Reality
+## 🎯 What This Bot Does
 
-### 🚨 **Understanding the Competition Landscape**
+PopMart Unified Bot is a smart automation system that monitors PopMart products and handles checkout automatically. It works with **both regular products and PopNow mystery box sets**, automatically detecting which type you're monitoring without any configuration needed.
 
-This browser-based automation tool operates within realistic limitations and is designed for moderate competition scenarios. Here's what you need to know:
+### 🧠 **Smart Features**
+- **Auto-Detection**: Automatically figures out if you're monitoring regular products or PopNow sets
+- **Lightning-Fast Monitoring**: Uses advanced techniques to catch restocks the moment they happen
+- **Dual Browser System**: Separate browsers for monitoring and checkout for maximum speed
+- **Crash-Resistant**: Built to handle errors gracefully and keep running
+- **Works with LABUBU**: Yes, it works with LABUBU products too (though competition is fierce!)
 
-#### **🔴 High Competition Releases (LABUBU, Limited Drops)**
-- **API-Based Bots Dominate**: Advanced scalpers use reverse-engineered mobile API endpoints
-- **No FECU Token Required**: Mobile APIs bypass the encrypted FECU token system used by web browsers
-- **Sub-Second Speed**: Direct API calls achieve checkout times under 1 second
-- **Browser Disadvantage**: This tool cannot compete with API-based bots on speed alone
+## ⚡ **Speed & Performance**
 
-#### **🟢 Recommended Target Collections**
-- **Molly Series**: Lower bot competition, higher success rates
-- **Twinkle Twinkle**: Less targeted by scalpers, good availability windows
-- **Space Molly**: Moderate competition, decent success chances
-- **Hirono**: Variable competition depending on specific releases
+### **Monitoring Speed**
+- **100ms checks**: Monitors every 0.1 seconds for instant detection
+- **Triple monitoring**: Uses MutationObserver + Polling + Animation Frame for maximum coverage
+- **Instant restock detection**: Catches the exact moment stock becomes available
 
-#### **🔧 Technical Reality**
-```
-Web Browser Method (This Bot):
-├── Requires DOM parsing and rendering
-├── Subject to FECU token encryption
-├── ~2-5 second checkout times
-└── Human-like interaction patterns
+### **Checkout Speed**
+- **PopNow products**: ~2 seconds from detection to payment page
+- **Regular products**: ~3-4 seconds from detection to payment page
+- **Pre-warmed browsers**: Checkout browser stays logged in and ready
 
-Mobile API Method (Scalper Bots):
-├── Direct API endpoint access
-├── No FECU token requirements
-├── ~0.5-1 second checkout times
-└── Unlimited concurrent requests
-```
+## 🛠️ **Installation & Setup**
 
-### **💡 When This Bot Works Best**
-- **Restocks of existing items** (less bot attention)
-- **Non-LABUBU character releases** (lower competition)
-- **Regional availability differences** (timing advantages)
-- **Monitoring and alerts** (even if manual checkout needed)
-
----
-
-## 🎯 Overview
-
-PopMart Unified Bot is a smart automation tool that automatically detects and monitors both regular PopMart products and PopNow mystery box sets. Using advanced monitoring techniques, it watches for restocks and handles the complete checkout process for both product types.
-
-## ✨ Key Features
-
-### 🧠 **Smart Auto-Detection**
-- **Unified System**: One bot handles both regular products and PopNow sets
-- **Auto-Detection**: Automatically identifies product type from URL and page elements
-- **Multi-Product Support**: Monitor any combination of regular and PopNow products
-- **Real-Time Monitoring**: High-speed detection using multiple monitoring methods
-
-### 🚀 **Lightning-Fast Checkout**
-- **Dual Browser Strategy**: Separate browsers for monitoring and checkout
-- **PopNow Optimization**: Specialized checkout flow for PopNow mystery boxes
-- **Speed Optimized**: Sub-2 second checkout times for PopNow products
-- **Auto-Login**: Persistent session management with pre-warmed browsers
-
-### 📊 **Professional Monitoring**
-- **High-Speed Detection**: MutationObserver + Polling + Animation Frame monitoring
-- **Restock Alerts**: Instant detection of stock availability changes
-- **Status Updates**: Real-time check counts and availability status
-- **Error Recovery**: Robust error handling and monitor reinjection
-
-### 🛡️ **Stealth & Reliability**
-- **Human-Like Behavior**: Light scrolling and natural interaction patterns
-- **Anti-Detection**: Advanced browser fingerprint masking
-- **Session Management**: Secure cookie handling and login persistence
-- **Dual Browser Safety**: Isolated monitoring and checkout processes
-
-## 🛠️ Installation
-
-### Prerequisites
+### **Requirements**
 - Python 3.8 or higher
-- Chrome browser installed
+- Chrome browser
+- PopMart account
 
-### Setup Steps
-
-1. **Clone the repository**
+### **Quick Start**
 ```bash
-git clone https://github.com/yourusername/popmart-box-fetch.git
-cd popmart-box-fetch
-```
+# 1. Clone the repository
+git clone https://github.com/yourusername/popmart-unified-bot.git
+cd popmart-unified-bot
 
-2. **Install dependencies**
-```bash
+# 2. Install dependencies
 pip install seleniumbase
+
+# 3. Run the bot
+python main.py
 ```
 
-3. **Configure your settings**
-Create a `config.py` file with your credentials:
-```python
-# Login credentials
-POPMART_EMAIL = "your_email@example.com"
-POPMART_PASSWORD = "your_password"
+That's it! No configuration files needed. The bot will:
+1. Ask you to login to PopMart in the checkout browser
+2. Show you available products from `popmart_products.json`
+3. Let you choose which products to monitor
+4. Start monitoring automatically
 
-# Bot configuration
-CHARACTER = "Molly"  # Options: "Space Molly", "LABUBU", "The Monsters", "Molly", "Twinkle Twinkle"
-AUTO_CHECKOUT = True  # True for auto-purchase, False for monitoring only
+## 📦 **Supported Products**
 
-# Shipping information
-FIRST_NAME = "John"
-LAST_NAME = "Doe"
-ADDRESS = "123 Main Street"
-CITY = "Vancouver"
-ZIP_CODE = "V6B 1A1"
-PHONE_NUMBER = "604-555-0123"
+The bot automatically detects product types from your `popmart_products.json` file:
 
-# Payment details
-CREDIT_CARD_NUMBER = "4111111111111111"
-NAME_ON_CARD = "John Doe"
-EXPIRATION_DATE = "1228"  # MMYY format
-SECURITY_CODE_CVV = "123"
+### **Current Products** (from popmart_products.json)
+- **Regular Products**: THE MONSTERS series, HIRONO figures, Baby Molly & Tabby
+- **PopNow Sets**: THE MONSTERS mystery boxes (IDs: 293, 170)
+
+### **Adding New Products**
+Just add them to `popmart_products.json`:
+```json
+{
+  "YOUR_PRODUCT_ID": {
+    "name": "Product Name",
+    "url": "https://www.popmart.com/ca/products/YOUR_PRODUCT_ID/"
+  }
+}
 ```
 
-4. **Run the unified bot**
+The bot will automatically detect if it's a regular product or PopNow set based on the URL.
+
+## 🎮 **How to Use**
+
+### **Step 1: Start the Bot**
 ```bash
 python main.py
 ```
 
-## 🎮 Usage
+### **Step 2: Login**
+- Bot opens a checkout browser
+- Login to your PopMart account
+- Keep this browser open (it stays logged in)
 
-### Monitor Mode
-Set `AUTO_CHECKOUT = False` in config.py to run in monitor-only mode:
-- Continuously scans for product availability
-- Reports stock status and pricing
-- No automatic purchasing
+### **Step 3: Choose Products**
+- Bot shows available products
+- Enter product IDs (e.g., `2710,293`) or type `all`
+- Bot auto-detects product types
 
-### Auto-Checkout Mode
-Set `AUTO_CHECKOUT = True` for automatic purchasing:
-- Monitors products in real-time
-- Prompts for user confirmation when products are available
-- Completes checkout process automatically upon approval
+### **Step 4: Enable Auto-Checkout**
+- Choose `y` for automatic purchasing
+- Choose `n` for monitoring only
 
-### Character Selection
-Choose your target character in config.py:
-- **"Space Molly"** - Futuristic space-themed collectibles
-- **"LABUBU"** ⚠️ - Popular rabbit-like character series (high bot competition)
-- **"Hirono"** - Cute Hirono figures
-- **"Molly"** ✅ - Classic Molly character variations (recommended)
-- **"Twinkle Twinkle"** ✅ - Sparkly magical-themed collection (recommended)
+### **Step 5: Monitor**
+- Bot opens monitoring browser
+- Watches for stock changes in real-time
+- Shows live status updates
 
-## 📺 Sample Output
+### **Step 6: Checkout** (if auto-checkout enabled)
+- Bot detects stock availability
+- Automatically completes checkout process
+- Takes you to payment page
+- You complete payment manually
 
+## 🚨 **Competition Reality Check**
+
+### **LABUBU & High-Demand Releases**
+- **This bot works with LABUBU** ✅
+- **But competition is intense** ⚠️
+- API-based bots can checkout in <1 second
+- This browser-based bot takes ~2-4 seconds
+- **Still worth trying** - many people succeed!
+
+### **Best Success Rates**
+- **PopNow mystery boxes**: Good success rate
+- **Regular restocks**: Very good success rate  
+- **Less popular characters**: Excellent success rate
+- **LABUBU new releases**: Challenging but possible
+
+### **Why This Bot Still Works**
+- **Instant detection**: Catches restocks immediately
+- **Reliable**: Doesn't crash like many other bots
+- **Human-like**: Harder for PopMart to detect
+- **Dual browser**: Checkout browser stays ready
+
+## 🔧 **Technical Details**
+
+### **Monitoring System**
 ```
-🚀 Initializing PopMart Checkout Bot...
-
-═════════════════════════════════════════════════════════════════════
-🤖 POPMART CHECKOUT BOT v2.0
-═════════════════════════════════════════════════════════════════════
-🎯 Target Character: Molly
-🛒 Mode: AUTO-CHECKOUT
-🌐 Search URL: https://www.popmart.com/ca/search/MOLLY
-⏰ Started: 2024-01-15 21:27:04
-═════════════════════════════════════════════════════════════════════
-
-🔑 Authenticating...
-✅ Already authenticated!
-
-╔════════════════════════════════════════════════════════════════════╗
-║ 🔄 SCAN CYCLE #001 - 21:27:04           Runtime: 0:00:15          ║
-╚════════════════════════════════════════════════════════════════════╝
-
-🔄 Loading products (Advanced Scroll + Pagination)...
-
-📦 PRODUCT DISCOVERY SUMMARY
-┌──────────────────────────────────────────────────────────────────────┐
-│ Total Products Found: 37                         │
-│ Search Method: Advanced Scroll + Pagination      │
-│ Duplicate Removal: ✅ Enabled                   │
-└──────────────────────────────────────────────────┘
-
-🔍 SAMPLE PRODUCTS:
-  01. MOLLY × INSTINCTOY GLOW Series Vinyl Plush...
-  02. MOLLY Hirono Vacation Series Vinyl Plush...
-  03. MOLLY The Monsters Series Vinyl Plush...
-  04. MOLLY Carb-Lover Series Figures...
-  05. MOLLY Baby Molly My Huggable Discovery...
-  ... and 32 more products
-
-🔍 CHECKING AVAILABILITY...
-  [████████████████████] 100% │ MOLLY × INSTINCTOY GLOW Series...      │ ❌ OUT OF STOCK
-  [████████████████████] 100% │ MOLLY Hirono Vacation Series...        │ ✅ AVAILABLE - $42.99
-  [████████████████████] 100% │ MOLLY The Monsters Series...           │ ❌ OUT OF STOCK
-  [████████████████████] 100% │ MOLLY Carb-Lover Series...             │ ❌ OUT OF STOCK
-
-🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
- 🛒 PURCHASE OPPORTUNITY DETECTED!
-🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
-
-╔════════════════════════════════════════════════════════════════════╗
-║ 📦 Product: MOLLY Hirono Vacation Series Vinyl Plush              ║
-║ 💰 Price: $42.99 CAD                                              ║
-║ 🔗 URL: https://www.popmart.com/ca/products/2018/MOLLY-Hirono     ║
-╚════════════════════════════════════════════════════════════════════╝
-
-💳 Purchase this product for $42.99? (y/n): y
-
-🚀 Initiating checkout process...
-🛒 Fast checkout initiated...
-🛍️ Adding to cart...
-✅ Added to cart!
-🛒 Proceeding to cart...
-💳 Processing checkout...
-🎯 Placing order...
-🚀 Submitting order...
-🎉 Order successful!
-
-🎉 CHECKOUT SUCCESSFUL!
-✅ Order completed - stopping bot
-
-📈 SESSION SUMMARY
-┌──────────────────────────────────────────────────┐
-│ Session Duration: 0:02:35                        │
-│ Total Scan Cycles: 1                            │
-│ Products Monitored: 37                           │
-│ Mode: AUTO-CHECKOUT                              │
-└──────────────────────────────────────────────────┘
+Triple Monitoring Approach:
+├── MutationObserver: Instant DOM change detection
+├── High-frequency polling: 250ms backup checks  
+└── Animation frame monitoring: Visual change detection
 ```
 
-## 🔧 Technical Details
+### **PopNow Checkout Process**
+1. Click "Buy Multiple Boxes" button
+2. Select all checkboxes automatically
+3. Click "ADD TO BAG"
+4. Click "View" to go to cart
+5. Click "Confirm and Check out"
+6. Click "PROCEED TO PAY"
+7. User completes payment
 
-### Architecture
-- **SeleniumBase Framework**: Robust web automation with anti-detection features
-- **Intelligent Scrolling**: Handles infinite scroll and pagination automatically
-- **Multi-Method Stock Checking**: Combines DOM analysis, text scanning, and button state detection
-- **Session Management**: Persistent login with encrypted cookie storage
+### **Regular Product Checkout**
+1. Click "ADD TO BAG" button
+2. Go to cart automatically
+3. Select all items
+4. Click checkout
+5. Click "PROCEED TO PAY"
+6. User completes payment
 
-### Performance Optimizations
-- **Parallel Processing**: Concurrent product availability checks
-- **Smart Caching**: Reduces redundant requests and improves speed
-- **Optimized Selectors**: Fine-tuned CSS selectors for maximum compatibility
-- **Rate Limiting**: Prevents overwhelming servers while maintaining speed
+## 🛡️ **Safety Features**
 
-### Browser Compatibility
-- **Chrome**: Primary support with undetected-chromedriver
-- **Anti-Detection**: Masked browser fingerprints and human-like behavior patterns
-- **Headless Mode**: Optional background operation for server deployment
+- **Crash protection**: Bot continues running even if errors occur
+- **Browser safety**: Browsers don't auto-close after checkout
+- **Error recovery**: Automatically reinjects monitoring code if needed
+- **Human behavior**: Light scrolling to avoid detection
+- **Session management**: Keeps you logged in across sessions
 
-## 🛡️ Security & Privacy
+## ⚠️ **Important Notes**
 
-- **Local Storage**: All credentials and session data stored locally
-- **Encrypted Sessions**: Secure cookie management with automatic cleanup
-- **No Data Collection**: Bot operates independently without external data transmission
-- **User Control**: Manual confirmation required for all purchases
+### **Legal & Ethical Use**
+- For personal use only (not commercial resale)
+- Respects PopMart's servers with reasonable delays
+- Requires manual payment completion
+- User is responsible for following PopMart's Terms of Service
 
-## 📋 Supported Characters
+### **Realistic Expectations**
+- **Not guaranteed**: No bot can guarantee success
+- **Competition exists**: Other bots are also running
+- **Manual payment**: You must complete payment yourself
+- **Account risk**: Use at your own discretion
 
-| Character           | Collection URL              | Description                          | Bot Competition Level |
-|---------------------|-----------------------------|--------------------------------------|----------------------|
-| **Space Molly**     | `/search/SPACE%20MOLLY`     | Futuristic space-themed collectibles | 🟡 Medium |
-| **LABUBU**          | `/search/LABUBU`            | Popular rabbit-like character series | 🔴 **Very High** |
-| **Hirono**          | `/search/Hirono`            | Cute Hirono figures                  | 🟡 Medium |
-| **Molly**           | `/search/MOLLY`             | Classic Molly character variations   | 🟢 **Low-Medium** |
-| **Twinkle Twinkle** | `/search/TWINKLE%20TWINKLE` | Sparkly magical-themed collection    | 🟢 **Low-Medium** |
+### **Best Practices**
+- Don't run multiple instances simultaneously
+- Don't monitor too many products at once
+- Complete payments quickly when successful
+- Keep your PopMart account secure
 
-## ⚠️ Important Notes
+## 🔍 **Troubleshooting**
 
-### Bot Competition Reality
-- **LABUBU Releases**: Expect heavy competition from API-based bots that bypass browser limitations
-- **API Bots**: Some competitors use reverse-engineered mobile APIs for instant checkout (sub-second speeds)
-- **Best Success Rate**: Focus on Molly, Twinkle Twinkle, or less popular collections
-- **Realistic Expectations**: This browser-based approach prioritizes reliability over raw speed
+### **Common Issues**
+- **"No products found"**: Check your `popmart_products.json` file
+- **Login issues**: Make sure you're logged into the checkout browser
+- **Monitoring stops**: Bot will try to restart automatically
+- **Checkout fails**: Payment page should still be open for manual completion
 
-### Legal Compliance
-- **Terms of Service**: Ensure compliance with PopMart's ToS before use
-- **Rate Limiting**: Bot includes built-in delays to respect server resources
-- **Personal Use**: Intended for personal collecting, not commercial resale
+### **Getting Help**
+- Check the console output for error messages
+- Make sure Chrome browser is up to date
+- Ensure stable internet connection
+- Try restarting the bot if issues persist
 
-### Responsible Usage
-- **Manual Confirmation**: All purchases require user approval
-- **Reasonable Limits**: Avoid excessive requests that could impact site performance
-- **Account Security**: Use secure, unique passwords and enable 2FA when possible
+## 📈 **Success Tips**
 
-## 🤝 Contributing
+1. **Monitor multiple products**: Increases your chances
+2. **Focus on PopNow sets**: Often less competition
+3. **Be ready for payment**: Have payment info ready
+4. **Monitor during restocks**: Not just new releases
+5. **Try different times**: Early morning or late night often better
 
-Contributions are welcome! Please feel free to submit pull requests, create issues, or suggest improvements.
+## 🤝 **Contributing**
 
-### Development Setup
+Want to improve the bot? Contributions welcome!
+
 ```bash
-git clone https://github.com/yourusername/popmart-box-fetch.git
-cd popmart-box-fetch
-pip install -r requirements.txt
+git clone https://github.com/yourusername/popmart-unified-bot.git
+cd popmart-unified-bot
+# Make your changes
+# Submit a pull request
 ```
 
-### Code Style
-- Follow PEP 8 guidelines
-- Include comprehensive docstrings
-- Add unit tests for new features
-- Maintain backward compatibility
+## 📄 **License**
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙋‍♂️ Support
-
-If you encounter any issues or have questions:
-
-1. **Check the Issues**: Browse existing GitHub issues for solutions
-2. **Create an Issue**: Submit a detailed bug report or feature request
-3. **Documentation**: Review the code comments and docstrings
-
-## 🌟 Acknowledgments
-
-- **SeleniumBase**: For providing an excellent web automation framework
-- **PopMart Community**: For inspiration and feedback
-- **Open Source Contributors**: For continuous improvements and bug fixes
+MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-**⭐ If this project helped you secure your favorite PopMart collectibles, please consider giving it a star!**
+**🎯 Built for PopMart collectors who want a reliable, intelligent bot that actually works**
 
-*Built with ❤️ for the PopMart collecting community*
+*Remember: This bot gives you an edge, but success still requires timing, luck, and quick payment completion!*
