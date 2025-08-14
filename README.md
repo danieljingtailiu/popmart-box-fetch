@@ -76,52 +76,221 @@ Just add them to `popmart_products.json`:
 
 The bot will automatically detect if it's a regular product or PopNow set based on the URL.
 
-## 🎮 **How to Use**
+## 🎮 **Step-by-Step Usage Guide**
 
 ### **Step 1: Start the Bot**
 ```bash
 python main.py
 ```
+The bot will start and show you the welcome screen.
 
-### **Step 2: Login**
-- Bot opens a checkout browser
-- Login to your PopMart account
-- Keep this browser open (it stays logged in)
+### **Step 2: Setup Checkout Browser**
+1. **Bot opens a Chrome browser** (this is your checkout browser)
+2. **You see this message:**
+   ```
+   🔐 LOGIN TO CHECKOUT BROWSER
+   1. Login to your PopMart account
+   2. Complete any captchas
+   3. Stay logged in - DO NOT close this browser
+   ```
+3. **Login to PopMart** in this browser
+4. **Press ENTER** when logged in
+5. **Keep this browser open** - it stays ready for checkout
 
-### **Step 3: Choose Products**
-- Bot shows available products
-- Enter product IDs (e.g., `2710,293`) or type `all`
-- Bot auto-detects product types
+### **Step 3: Setup Monitor Browser**
+1. **Bot opens a second Chrome browser** (this is your monitoring browser)
+2. **You see available products:**
+   ```
+   📦 Available products:
+   
+   🛍️ Normal Products:
+     2710: THE MONSTERS Big into Energy Series
+     3189: HIRONO Reshape Series Figures
+     3501: Baby Molly & Baby Tabby Series Figures
+     2088: THE MONSTERS Let's Checkmate Series-Vinyl Plush Doll
+   
+   🎁 PopNow Sets:
+     293: THE MONSTERS - Exciting Macaron Vinyl Face Blind Box
+     170: THE MONSTERRS Let's Checkmate Series-Fridge Magnet Blind Box
+   ```
 
-### **Step 4: Enable Auto-Checkout**
-- Choose `y` for automatic purchasing
-- Choose `n` for monitoring only
+### **Step 4: Choose What to Monitor**
+**💡 RECOMMENDATION: Choose ONE product ID for best results**
 
-### **Step 5: Monitor**
-- Bot opens monitoring browser
-- Watches for stock changes in real-time
-- Shows live status updates
+**Good choices:**
+- Enter `2710` (for THE MONSTERS Energy Series)
+- Enter `293` (for PopNow mystery box)
+- Enter `3189` (for HIRONO figures)
 
-### **Step 6: Checkout** (if auto-checkout enabled)
-- Bot detects stock availability
-- Automatically completes checkout process
-- Takes you to payment page
-- You complete payment manually
+**You can also:**
+- Enter `all` (monitors everything - slower)
+- Enter `2710,293` (multiple products - not recommended)
+
+**Example:**
+```
+Your choice: 2710
+```
+
+### **Step 5: Enable Auto-Checkout**
+```
+🤖 Enable auto-checkout? (y/n): y
+```
+- **Type `y`** - Bot will automatically checkout when stock is found
+- **Type `n`** - Bot will only alert you (no automatic purchase)
+
+### **Step 6: Start Monitoring**
+```
+✅ Press ENTER to START monitoring...
+```
+1. **Press ENTER** to begin
+2. **Bot navigates** to your chosen product
+3. **Monitoring starts** - you'll see:
+   ```
+   🟢 Checks: 1,234 | Status: Out of Stock (BLACK) | Type: NORMAL
+   ```
+
+### **Step 7: When Stock is Found**
+**If stock becomes available:**
+1. **Bot detects instantly** and shows:
+   ```
+   🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
+   💥 RESTOCK MOMENT DETECTED! 💥
+   🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
+   ```
+
+2. **Auto-checkout begins** (if enabled):
+   ```
+   ⚡ QUICK CHECKOUT: THE MONSTERS Big into Energy Series
+   📦 Buy Multiple Boxes... (for PopNow)
+   🛒 Add to bag...
+   ✅ Checkout...
+   💳 Pay...
+   ```
+
+3. **Payment page opens** - **YOU MUST COMPLETE PAYMENT MANUALLY**
+
+### **Step 8: Complete Payment**
+1. **Payment page is ready** in the checkout browser
+2. **Complete your payment quickly**
+3. **Don't close the browser** until payment is done
+
+---
+
+## 📺 **What You'll Actually See**
+
+### **When You Start the Bot:**
+```
+⚡ PopMart Bot - Unified Auto-Detection Edition
+============================================================
+🧠 Smart Detection: Automatically detects product type
+🔍 Supports: Normal products & PopNow sets
+============================================================
+
+🔍 Starting monitor browser...
+✅ Monitor browser ready
+
+🔐 LOGIN TO CHECKOUT BROWSER
+============================================================
+⚠️ IMPORTANT: This browser will be used for checkout
+1. Login to your PopMart account
+2. Complete any captchas
+3. Stay logged in - DO NOT close this browser
+============================================================
+
+✅ Press ENTER when logged in...
+```
+
+### **Choosing Products:**
+```
+📦 Available products:
+
+🛍️ Normal Products:
+  2710: THE MONSTERS Big into Energy Series
+  3189: HIRONO Reshape Series Figures
+  3501: Baby Molly & Baby Tabby Series Figures
+  2088: THE MONSTERS Let's Checkmate Series-Vinyl Plush Doll
+
+🎁 PopNow Sets:
+  293: THE MONSTERS - Exciting Macaron Vinyl Face Blind Box
+  170: THE MONSTERRS Let's Checkmate Series-Fridge Magnet Blind Box
+
+💡 Options:
+  - Enter product ID(s) separated by comma
+  - Type 'all' to monitor all products
+  - Enter any ID (bot will auto-detect type)
+
+Your choice: 2710
+
+🤖 Enable auto-checkout? (y/n): y
+
+✅ Detected product type: NORMAL
+✅ Press ENTER to START monitoring...
+```
+
+### **During Monitoring:**
+```
+⚡ HIGH-SPEED Monitoring: THE MONSTERS Big into Energy Series
+🔗 URL: https://www.popmart.com/ca/products/2710/
+🎯 Watching for: black button → red button (ADD TO BAG)
+
+✅ Monitor script injected successfully
+✅ Button found: ADD TO BAG
+📋 Initial class: index_usBtn__abc123 index_black__def456
+
+🚀 Monitor active - Checking multiple times per second...
+👁️ Watching for button class change: index_black__ → index_red__
+📊 Starting monitoring loop...
+✅ Monitoring loop started successfully
+
+🔴 Checks: 1,247 | Status: BLACK (Out of Stock) | Type: NORMAL
+```
+
+### **When Stock is Found:**
+```
+🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
+💥 RESTOCK MOMENT DETECTED! 💥
+🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
+
+============================================================
+🎯 STOCK FOUND: THE MONSTERS Big into Energy Series
+📦 Product Type: NORMAL
+⏰ Time: 2024-01-15 14:23:17
+============================================================
+
+⚡ QUICK CHECKOUT: THE MONSTERS Big into Energy Series
+🛒 Add to bag...
+👁️ Cart...
+✅ Checkout...
+💳 Pay...
+
+⏱️ CHECKOUT COMPLETED IN: 2.34 seconds!
+💳 COMPLETE PAYMENT NOW!
+
+============================================================
+💳 PAYMENT TIME
+============================================================
+• Complete your payment in the checkout browser
+• DO NOT CLOSE the checkout browser
+• Monitoring has stopped - checkout browser stays open
+============================================================
+```
 
 ## 🚨 **Competition Reality Check**
 
 ### **LABUBU & High-Demand Releases**
-- **This bot works with LABUBU** ✅
-- **But competition is intense** ⚠️
-- API-based bots can checkout in <1 second
-- This browser-based bot takes ~2-4 seconds
-- **Still worth trying** - many people succeed!
+- **✅ CONFIRMED: This bot works with LABUBU** (tested and verified!)
+- **⚠️ Competition is intense** - Many bots are targeting LABUBU
+- **🤖 API-based bots** can checkout in <1 second
+- **🌐 This browser-based bot** takes ~2-4 seconds
+- **🎯 Still worth trying** - Success depends on timing and luck
+- **💡 Best strategy**: Monitor single LABUBU product for maximum speed
 
-### **Best Success Rates**
-- **PopNow mystery boxes**: Good success rate
-- **Regular restocks**: Very good success rate  
-- **Less popular characters**: Excellent success rate
-- **LABUBU new releases**: Challenging but possible
+### **Success Rates by Product Type**
+- **🎁 PopNow mystery boxes**: Good success rate (less competition)
+- **🔄 Regular restocks**: Very good success rate (less bot attention)
+- **👥 Less popular characters**: Excellent success rate (HIRONO, Baby Molly)
+- **🔥 LABUBU releases**: Challenging but **CONFIRMED WORKING** (choose single product!)
+- **⭐ Single product monitoring**: **MUCH BETTER** than monitoring multiple products
 
 ### **Why This Bot Still Works**
 - **Instant detection**: Catches restocks immediately
@@ -200,11 +369,18 @@ Triple Monitoring Approach:
 
 ## 📈 **Success Tips**
 
-1. **Monitor multiple products**: Increases your chances
-2. **Focus on PopNow sets**: Often less competition
-3. **Be ready for payment**: Have payment info ready
-4. **Monitor during restocks**: Not just new releases
-5. **Try different times**: Early morning or late night often better
+### **🎯 MOST IMPORTANT: Choose Single Product**
+- **✅ DO**: Enter one product ID (e.g., `2710`)
+- **❌ DON'T**: Monitor multiple products at once
+- **Why**: Single product = faster detection and checkout
+
+### **🚀 Other Success Tips**
+1. **Have payment ready**: Credit card info saved in browser
+2. **Stable internet**: Wired connection better than WiFi
+3. **Monitor restocks**: Not just new releases (less competition)
+4. **Try off-peak hours**: Early morning (6-8 AM) or late night (11 PM-1 AM)
+5. **Keep browsers open**: Don't close them between sessions
+6. **For LABUBU**: Be extra quick with payment completion
 
 ## 🤝 **Contributing**
 
