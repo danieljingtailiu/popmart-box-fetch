@@ -2,6 +2,14 @@ popmart_session.json
 downloaded_files/
 popmart_monitor.py
 
+# Bot-specific sensitive files
+*.session
+*_session.json
+cookies.json
+user_data/
+credentials.json
+config_local.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
