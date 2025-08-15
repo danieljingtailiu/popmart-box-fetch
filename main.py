@@ -30,7 +30,8 @@ class PopMartBot:
             uc=True,
             headless=False,
             incognito=False,
-            undetectable=True
+            undetectable=True,
+            page_load_strategy='none'  # Don't wait for any resources - FASTEST
         )
         
         self.monitor = UnifiedPopMartMonitor(self.monitor_driver)
@@ -46,7 +47,7 @@ class PopMartBot:
             incognito=False,
             undetectable=True,
             uc_cdp_events=True,
-            page_load_strategy='eager'  # Don't wait for all resources
+            page_load_strategy='none'  # Don't wait for any resources - FASTEST
         )
         
         # Extra stealth for checkout browser
@@ -94,11 +95,11 @@ class PopMartBot:
         # Pre-warm the browser by visiting key pages
         print("⚡ Pre-warming checkout browser...")
         self.checkout_driver.get("https://www.popmart.com/ca")
-        time.sleep(0.5)
+        time.sleep(0.2)  # Much faster pre-warming
         
         # Pre-visit cart to cache resources
         self.checkout_driver.execute_script("window.open('https://www.popmart.com/ca/largeShoppingCart', '_blank');")
-        time.sleep(0.5)
+        time.sleep(0.2)  # Much faster cart pre-loading
         
         # Close the extra tab
         handles = self.checkout_driver.window_handles
@@ -118,68 +119,70 @@ class PopMartBot:
             print(f"\n⚡ POPNOW LIGHTNING CHECKOUT: {product_info['product_name']}")
             start_time = time.time()
             
-            # 1. Go to PopNow page - MINIMAL WAIT
+            # 1. Go to PopNow page - ULTRA FAST
             self.checkout_driver.get(product_info['url'])
-            time.sleep(0.4)  # Slightly increased to ensure page loads
+            time.sleep(0.2)  # Minimal wait for page load
             
-            # 2. Click "Buy Multiple Boxes" - FAST
+            # 2. Click "Buy Multiple Boxes" - ULTRA FAST
             print("📦 Buy Multiple Boxes...")
             self.checkout_driver.execute_script("""
-                // Target the exact button element
-                const buyBtn = document.querySelector('button.ant-btn.ant-btn-ghost.index_chooseMulitityBtn__n0MoA');
-                if (buyBtn && buyBtn.textContent.includes('Buy Multiple Boxes')) {
-                    buyBtn.click();
-                } else {
-                    // Fallback method
+                // Immediate execution - no delays
+                (function() {
+                    const buyBtn = document.querySelector('button.ant-btn.ant-btn-ghost.index_chooseMulitityBtn__n0MoA');
+                    if (buyBtn && buyBtn.textContent.includes('Buy Multiple Boxes')) {
+                        buyBtn.click();
+                        return;
+                    }
+                    // Ultra fast fallback
                     const buttons = document.querySelectorAll('button');
                     for (let btn of buttons) {
                         if (btn.textContent.includes('Buy Multiple Boxes')) {
                             btn.click();
-                            break;
+                            return;
                         }
                     }
-                }
+                })();
             """)
-            time.sleep(0.2)  # Quick wait for modal
+            time.sleep(0.1)  # Ultra quick wait for modal
             
-            # 3. PROPERLY Click SELECT ALL checkbox
+            # 3. ULTRA FAST SELECT ALL checkbox
             print("☑️ Select all...")
             self.checkout_driver.execute_script("""
-                // Wait a tiny bit for checkboxes to render
-                setTimeout(() => {
-                    // Method 1: Click the first checkbox (usually select all)
+                // Immediate execution - no setTimeout delays
+                (function() {
                     const checkboxes = document.querySelectorAll('input[type="checkbox"].ant-checkbox-input');
                     if (checkboxes.length > 0) {
-                        checkboxes[0].click();
+                        checkboxes[0].click();  // Click select all immediately
                         console.log('Clicked select all checkbox');
+                        
+                        // Immediate backup check
+                        setTimeout(() => {
+                            checkboxes.forEach((cb, index) => {
+                                if (index > 0 && !cb.checked) {
+                                    cb.click();
+                                }
+                            });
+                        }, 50);  // Reduced from 100ms
                     }
-                    
-                    // Method 2: Ensure all are selected (backup)
-                    setTimeout(() => {
-                        const allCheckboxes = document.querySelectorAll('input[type="checkbox"].ant-checkbox-input');
-                        allCheckboxes.forEach((cb, index) => {
-                            if (index > 0 && !cb.checked) {  // Skip first (select all), check others
-                                console.log(`Checkbox ${index} was not checked, clicking it`);
-                                cb.click();
-                            }
-                        });
-                    }, 100);
-                }, 100);
+                })();
             """)
-            time.sleep(0.2)  # Quick wait for selection
+            time.sleep(0.1)  # Ultra quick wait for selection
             
-            # 4. Click "ADD TO BAG"
+            # 4. Click "ADD TO BAG" - ULTRA FAST
             print("🛒 Add to bag...")
             self.checkout_driver.execute_script("""
-                const buttons = document.querySelectorAll('button');
-                for (let btn of buttons) {
-                    if (btn.textContent.includes('ADD TO BAG')) {
-                        btn.click();
-                        break;
+                // Immediate execution
+                (function() {
+                    const buttons = document.querySelectorAll('button');
+                    for (let btn of buttons) {
+                        if (btn.textContent.includes('ADD TO BAG')) {
+                            btn.click();
+                            return;
+                        }
                     }
-                }
+                })();
             """)
-            time.sleep(0.3)  # Quick wait for success notification
+            time.sleep(0.15)  # Ultra quick wait for success notification
             
             # 5. Click "View" button - FAST
             print("👁️ View cart...")
@@ -205,7 +208,7 @@ class PopMartBot:
             if not view_clicked:
                 self.checkout_driver.get("https://www.popmart.com/ca/largeShoppingCart")
             
-            time.sleep(0.4)  # Quick wait for cart
+            time.sleep(0.2)  # Ultra quick wait for cart
             
             # 6. Click "CONFIRM AND CHECK OUT" - FAST
             print("✅ Checkout...")
@@ -225,7 +228,7 @@ class PopMartBot:
                     }
                 }
             """)
-            time.sleep(0.8)  # Wait for payment page to load
+            time.sleep(0.4)  # Quick wait for payment page to load
             
             # 7. Click "PROCEED TO PAY" - FINAL STEP
             print("💳 Pay...")
@@ -278,7 +281,7 @@ class PopMartBot:
             
             # 1. Go directly to product page in checkout browser
             self.checkout_driver.get(product_info['url'])
-            time.sleep(0.3)  # Reduced from 0.5s
+            time.sleep(0.15)  # Ultra fast page load
             
             # 2. Click ADD TO BAG immediately - no setTimeout
             self.checkout_driver.execute_script("""
@@ -291,11 +294,11 @@ class PopMartBot:
                 }
             """)
             
-            time.sleep(0.3)  # Reduced from 0.5s
+            time.sleep(0.1)  # Ultra quick add to bag
             
             # 3. Go to cart immediately
             self.checkout_driver.get("https://www.popmart.com/ca/largeShoppingCart")
-            time.sleep(0.3)  # Reduced from 0.5s
+            time.sleep(0.15)  # Ultra quick cart load
             
             # 4. Select all and checkout in one script - faster execution
             self.checkout_driver.execute_script("""
@@ -315,7 +318,7 @@ class PopMartBot:
                 }, 200);  // Reduced from 300ms
             """)
             
-            time.sleep(0.5)  # Reduced from 1s
+            time.sleep(0.2)  # Ultra quick checkout
             
             # 5. Click proceed to pay
             self.checkout_driver.execute_script("""
@@ -504,7 +507,7 @@ class PopMartBot:
                         product_url = f"https://www.popmart.com/ca/products/{product_ids[0]}/"
                 
                 self.monitor_driver.get(product_url)
-                time.sleep(2)
+                time.sleep(0.8)  # Much faster navigation
                 
                 # Auto-detect type
                 detected_type = self.monitor.detect_product_type()

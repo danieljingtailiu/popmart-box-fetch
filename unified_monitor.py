@@ -452,7 +452,7 @@ class UnifiedPopMartMonitor:
         if not skip_navigation:
             print(f"📍 Navigating to product page...")
             self.driver.get(product['url'])
-            time.sleep(2)
+            time.sleep(0.8)  # Much faster navigation
         
         # Auto-detect product type from page
         detected_type = self.detect_product_type()
@@ -480,7 +480,7 @@ class UnifiedPopMartMonitor:
             return
         
         # Initial check
-        time.sleep(0.5)
+        time.sleep(0.2)  # Quick initial check
         try:
             if detected_type == 'popnow':
                 initial_check = self.driver.execute_script("""
@@ -672,7 +672,7 @@ class UnifiedPopMartMonitor:
             else:
                 self.driver.execute_script(f"window.open('{product['url']}', '_blank');")
             
-            time.sleep(1.5)
+            time.sleep(0.8)  # Faster tab opening
             
             all_handles = self.driver.window_handles
             self.driver.switch_to.window(all_handles[-1])

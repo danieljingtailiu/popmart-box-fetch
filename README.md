@@ -60,8 +60,9 @@ That's it! No configuration files needed. The bot will:
 The bot automatically detects product types from your `popmart_products.json` file:
 
 ### **Current Products** (from popmart_products.json)
-- **Regular Products**: THE MONSTERS series, HIRONO figures, Baby Molly & Tabby
+- **Regular Products**: THE MONSTERS series, HIRONO figures, Baby Molly & Tabby, **LABUBU Summer Ride**
 - **PopNow Sets**: THE MONSTERS mystery boxes (IDs: 293, 170)
+- **Total**: 7 products (5 regular + 2 PopNow)
 
 ### **Adding New Products**
 Just add them to `popmart_products.json`:
@@ -108,6 +109,7 @@ The bot will start and show you the welcome screen.
      3189: HIRONO Reshape Series Figures
      3501: Baby Molly & Baby Tabby Series Figures
      2088: THE MONSTERS Let's Checkmate Series-Vinyl Plush Doll
+     3566: LABUBU Summerr Ride Figure
    
    🎁 PopNow Sets:
      293: THE MONSTERS - Exciting Macaron Vinyl Face Blind Box
@@ -119,6 +121,7 @@ The bot will start and show you the welcome screen.
 
 **Good choices:**
 - Enter `2710` (for THE MONSTERS Energy Series)
+- Enter `3566` (for LABUBU Summer Ride - CONFIRMED WORKING!)
 - Enter `293` (for PopNow mystery box)
 - Enter `3189` (for HIRONO figures)
 
@@ -209,6 +212,7 @@ Your choice: 2710
   3189: HIRONO Reshape Series Figures
   3501: Baby Molly & Baby Tabby Series Figures
   2088: THE MONSTERS Let's Checkmate Series-Vinyl Plush Doll
+  3566: LABUBU Summerr Ride Figure
 
 🎁 PopNow Sets:
   293: THE MONSTERS - Exciting Macaron Vinyl Face Blind Box
