@@ -21,6 +21,7 @@ class PopMartBot:
         self.monitoring = True
         self.stock_queue = queue.Queue()
         self.checkout_successful = False
+        self.prefer_whole_set = False
         
     def setup_monitor_driver(self):
         """Setup browser for monitoring (lightweight)"""
@@ -143,7 +144,7 @@ class PopMartBot:
                     }
                 })();
             """)
-            time.sleep(0.1)  # Ultra quick wait for modal
+            time.sleep(0.03)  # Ultra minimal wait for modal
             
             # 3. ULTRA FAST SELECT ALL checkbox
             print("☑️ Select all...")
@@ -155,18 +156,16 @@ class PopMartBot:
                         checkboxes[0].click();  // Click select all immediately
                         console.log('Clicked select all checkbox');
                         
-                        // Immediate backup check
-                        setTimeout(() => {
-                            checkboxes.forEach((cb, index) => {
-                                if (index > 0 && !cb.checked) {
-                                    cb.click();
-                                }
-                            });
-                        }, 50);  // Reduced from 100ms
+                        // Immediate backup check - no setTimeout
+                        checkboxes.forEach((cb, index) => {
+                            if (index > 0 && !cb.checked) {
+                                cb.click();
+                            }
+                        });
                     }
                 })();
             """)
-            time.sleep(0.1)  # Ultra quick wait for selection
+            time.sleep(0.03)  # Ultra minimal wait for selection
             
             # 4. Click "ADD TO BAG" - ULTRA FAST
             print("🛒 Add to bag...")
@@ -182,7 +181,7 @@ class PopMartBot:
                     }
                 })();
             """)
-            time.sleep(0.15)  # Ultra quick wait for success notification
+            time.sleep(0.04)  # Ultra minimal wait for success notification
             
             # 5. Click "View" button - FAST
             print("👁️ View cart...")
@@ -208,7 +207,7 @@ class PopMartBot:
             if not view_clicked:
                 self.checkout_driver.get("https://www.popmart.com/ca/largeShoppingCart")
             
-            time.sleep(0.2)  # Ultra quick wait for cart
+            time.sleep(0.05)  # Ultra minimal wait for cart
             
             # 6. Click "CONFIRM AND CHECK OUT" - FAST
             print("✅ Checkout...")
@@ -228,7 +227,7 @@ class PopMartBot:
                     }
                 }
             """)
-            time.sleep(0.4)  # Quick wait for payment page to load
+            time.sleep(0.2)  # Minimal wait for payment page to load
             
             # 7. Click "PROCEED TO PAY" - FINAL STEP
             print("💳 Pay...")
@@ -277,69 +276,164 @@ class PopMartBot:
             return True
             
         try:
-            print(f"\n⚡ QUICK CHECKOUT: {product_info['product_name']}")
+            print(f"\n⚡ ULTRA-FAST CHECKOUT: {product_info['product_name']}")
+            start_time = time.time()
             
             # 1. Go directly to product page in checkout browser
             self.checkout_driver.get(product_info['url'])
-            time.sleep(0.15)  # Ultra fast page load
+            time.sleep(0.08)  # Minimal page load wait
             
-            # 2. Click ADD TO BAG immediately - no setTimeout
-            self.checkout_driver.execute_script("""
-                const buttons = document.querySelectorAll('div[class*="index_usBtn__"], button');
-                for (let btn of buttons) {
-                    if (btn.textContent.toUpperCase().includes('ADD TO BAG')) {
-                        btn.click();
-                        break;
-                    }
-                }
-            """)
+            # 2. Select whole set if preferred, then add to bag - ULTRA FAST
+            if self.prefer_whole_set:
+                print("📦 Selecting whole set...")
+                self.checkout_driver.execute_script("""
+                    // Immediate execution - select whole set first
+                    (function() {
+                        // Look for whole set option
+                        const wholeSets = document.querySelectorAll('div.index_sizeInfoItem__f_Uxb');
+                        for (let item of wholeSets) {
+                            const title = item.querySelector('div.index_sizeInfoTitle__kpZbS');
+                            if (title && title.textContent.trim().toLowerCase().includes('whole set')) {
+                                item.click();
+                                console.log('Whole set selected');
+                                break;
+                            }
+                        }
+                        
+                        // Immediately add to bag after selection
+                        setTimeout(() => {
+                            const buttons = document.querySelectorAll('div[class*="index_usBtn__"], button');
+                            for (let btn of buttons) {
+                                if (btn.textContent.toUpperCase().includes('ADD TO BAG')) {
+                                    btn.click();
+                                    return;
+                                }
+                            }
+                        }, 30);  // Very quick delay for whole set selection
+                    })();
+                """)
+            else:
+                print("🛒 Adding single box to bag...")
+                self.checkout_driver.execute_script("""
+                    // Immediate single box add to bag
+                    (function() {
+                        const buttons = document.querySelectorAll('div[class*="index_usBtn__"], button');
+                        for (let btn of buttons) {
+                            if (btn.textContent.toUpperCase().includes('ADD TO BAG')) {
+                                btn.click();
+                                return;
+                            }
+                        }
+                    })();
+                """)
             
-            time.sleep(0.1)  # Ultra quick add to bag
+            time.sleep(0.03)  # Ultra minimal wait for add to bag
             
             # 3. Go to cart immediately
             self.checkout_driver.get("https://www.popmart.com/ca/largeShoppingCart")
-            time.sleep(0.15)  # Ultra quick cart load
+            time.sleep(0.04)  # Ultra minimal cart load
             
-            # 4. Select all and checkout in one script - faster execution
+            # 4. ULTRA FAST select all and checkout - optimized timing
+            print("✅ Ultra-fast select all...")
             self.checkout_driver.execute_script("""
-                // Click select all immediately
-                const selectAll = document.querySelector('div.index_checkbox__w_166');
-                if (selectAll) selectAll.click();
-                
-                // Click checkout immediately after
-                setTimeout(() => {
+                // Step 1: Click select all immediately
+                (function() {
+                    const selectAll = document.querySelector('div.index_checkbox__w_166');
+                    if (selectAll) {
+                        selectAll.click();
+                        console.log('Select all clicked');
+                    }
+                })();
+            """)
+            
+            time.sleep(0.05)  # Tiny delay for select all to register
+            
+            print("🚀 Ultra-fast checkout button...")
+            self.checkout_driver.execute_script("""
+                // Step 2: Click checkout button with exact targeting
+                (function() {
+                    // Target the exact checkout button first
+                    const checkoutBtn = document.querySelector('button.ant-btn.ant-btn-primary.ant-btn-dangerous.index_checkout__V9YPC');
+                    if (checkoutBtn) {
+                        checkoutBtn.click();
+                        console.log('Exact checkout button clicked');
+                        return;
+                    }
+                    
+                    // Fallback method
                     const buttons = document.querySelectorAll('button');
                     for (let btn of buttons) {
                         if (btn.textContent.toUpperCase().includes('CHECK OUT')) {
                             btn.click();
-                            break;
+                            console.log('Fallback checkout clicked');
+                            return;
                         }
                     }
-                }, 200);  // Reduced from 300ms
+                })();
             """)
             
-            time.sleep(0.2)  # Ultra quick checkout
+            time.sleep(0.2)  # Wait for checkout page to load properly
             
-            # 5. Click proceed to pay
+            # 5. ULTRA FAST proceed to pay with retry mechanism
+            print("💳 Final payment button...")
             self.checkout_driver.execute_script("""
-                // Target the exact payment button element
-                const payBtn = document.querySelector('button.ant-btn.ant-btn-primary.ant-btn-dangerous.index_placeOrderBtn__wgYr6');
-                if (payBtn) {
-                    payBtn.click();
-                } else {
-                    // Fallback method
-                    const buttons = document.querySelectorAll('button');
-                    for (let btn of buttons) {
-                        if (btn.textContent.toUpperCase().includes('PROCEED TO PAY')) {
-                            btn.click();
-                            break;
+                // Wait for payment button with retry mechanism
+                (function() {
+                    let attempts = 0;
+                    const maxAttempts = 10;
+                    
+                    function tryClickPayment() {
+                        attempts++;
+                        
+                        // Method 1: Exact button targeting
+                        const payBtn = document.querySelector('button.ant-btn.ant-btn-primary.ant-btn-dangerous.index_placeOrderBtn__wgYr6');
+                        if (payBtn && payBtn.offsetParent !== null) {
+                            payBtn.click();
+                            console.log('Exact payment button clicked on attempt', attempts);
+                            return true;
                         }
+                        
+                        // Method 2: Look for PROCEED TO PAY text
+                        const buttons = document.querySelectorAll('button');
+                        for (let btn of buttons) {
+                            if (btn.textContent.toUpperCase().includes('PROCEED TO PAY') && btn.offsetParent !== null) {
+                                btn.click();
+                                console.log('PROCEED TO PAY button clicked on attempt', attempts);
+                                return true;
+                            }
+                        }
+                        
+                        // Method 3: Look for any payment-related button
+                        for (let btn of buttons) {
+                            const text = btn.textContent.toUpperCase();
+                            if ((text.includes('PAY') || text.includes('PLACE ORDER')) && btn.offsetParent !== null) {
+                                btn.click();
+                                console.log('Payment fallback button clicked on attempt', attempts);
+                                return true;
+                            }
+                        }
+                        
+                        // If not found and haven't reached max attempts, try again
+                        if (attempts < maxAttempts) {
+                            console.log('Payment button not found, retrying in 100ms... attempt', attempts);
+                            setTimeout(tryClickPayment, 100);
+                        } else {
+                            console.log('Payment button not found after', maxAttempts, 'attempts');
+                        }
+                        
+                        return false;
                     }
-                }
+                    
+                    // Start trying immediately
+                    tryClickPayment();
+                })();
             """)
             
-            print("✅ Reached payment page!")
-            print("⚠️ COMPLETE PAYMENT MANUALLY NOW!")
+            end_time = time.time()
+            total_time = end_time - start_time
+            
+            print(f"\n⏱️ ULTRA-FAST CHECKOUT COMPLETED IN: {total_time:.2f} seconds!")
+            print("💳 COMPLETE PAYMENT NOW!")
             
             self.checkout_successful = True
             
@@ -482,6 +576,14 @@ class PopMartBot:
                     else:
                         print("❌ No product IDs entered")
             
+            # Whole set preference (only for single product monitoring)
+            self.prefer_whole_set = False
+            if len(product_ids) == 1:
+                whole_set_choice = input("\n📦 Prefer whole set over single box? (y/n): ").strip().lower()
+                self.prefer_whole_set = whole_set_choice == 'y'
+                if self.prefer_whole_set:
+                    print("✅ Will prioritize whole set selection during checkout")
+            
             # Auto-checkout preference
             auto_choice = input("\n🤖 Enable auto-checkout? (y/n): ").strip().lower()
             self.auto_checkout = auto_choice == 'y'
@@ -489,6 +591,8 @@ class PopMartBot:
             print(f"\n{'='*60}")
             print(f"Setting up monitor for {len(product_ids)} products")
             print(f"Auto-checkout: {'ENABLED' if self.auto_checkout else 'DISABLED'}")
+            if hasattr(self, 'prefer_whole_set') and self.prefer_whole_set:
+                print("📦 Whole set preference: ENABLED")
             print("🔍 Bot will auto-detect product types")
             print(f"{'='*60}")
             
