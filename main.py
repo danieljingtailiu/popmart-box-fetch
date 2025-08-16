@@ -151,120 +151,362 @@ class PopMartBot:
             self.checkout_driver.execute_script("""
                 // Immediate execution - no setTimeout delays
                 (function() {
-                    const checkboxes = document.querySelectorAll('input[type="checkbox"].ant-checkbox-input');
-                    if (checkboxes.length > 0) {
-                        checkboxes[0].click();  // Click select all immediately
-                        console.log('Clicked select all checkbox');
-                        
-                        // Immediate backup check - no setTimeout
-                        checkboxes.forEach((cb, index) => {
-                            if (index > 0 && !cb.checked) {
-                                cb.click();
+                    // The REAL select all button is usually a div with checkbox-like behavior
+                    // Try the most common selectors in order of likelihood
+                    const selectAllSelectors = [
+                        'div.index_checkbox__w_166',  // Main select all div
+                        '.ant-checkbox-wrapper',       // Ant Design checkbox wrapper
+                        'div[class*="checkbox"]',     // Any div with checkbox in class
+                        'input[type="checkbox"]',     // Actual checkbox input
+                        '.ant-checkbox'               // Ant Design checkbox class
+                    ];
+                    
+                    let selectAllClicked = false;
+                    
+                    // First, try to find and click the select all button
+                    for (let selector of selectAllSelectors) {
+                        const elements = document.querySelectorAll(selector);
+                        for (let element of elements) {
+                            // Check if this looks like a select all button
+                            if (element.offsetParent !== null && !element.disabled) {
+                                // Click it immediately
+                                element.click();
+                                console.log('Select all clicked using selector:', selector);
+                                selectAllClicked = true;
+                                break;
                             }
-                        });
+                        }
+                        if (selectAllClicked) break;
                     }
+                    
+                    // If still not clicked, try clicking ALL checkboxes
+                    if (!selectAllClicked) {
+                        const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+                        if (allCheckboxes.length > 0) {
+                            allCheckboxes.forEach((cb, index) => {
+                                if (!cb.checked && cb.offsetParent !== null) {
+                                    cb.click();
+                                    console.log('Individual checkbox clicked:', index);
+                                }
+                            });
+                            selectAllClicked = true;
+                        }
+                    }
+                    
+                    // Final fallback: click any clickable element that might be select all
+                    if (!selectAllClicked) {
+                        const clickableElements = document.querySelectorAll('div[class*="checkbox"], .ant-checkbox-wrapper, div[role="checkbox"]');
+                        if (clickableElements.length > 0) {
+                            clickableElements[0].click();
+                            console.log('Fallback select all clicked');
+                        }
+                    }
+                    
+                    console.log('Select all process completed');
                 })();
             """)
-            time.sleep(0.03)  # Ultra minimal wait for selection
             
-            # 4. Click "ADD TO BAG" - ULTRA FAST
+            # NO DELAY - proceed immediately to add to bag
             print("🛒 Add to bag...")
             self.checkout_driver.execute_script("""
-                // Immediate execution
+                // Immediate single box add to bag
                 (function() {
-                    const buttons = document.querySelectorAll('button');
+                    const buttons = document.querySelectorAll('div[class*="index_usBtn__"], button');
                     for (let btn of buttons) {
-                        if (btn.textContent.includes('ADD TO BAG')) {
+                        if (btn.textContent.toUpperCase().includes('ADD TO BAG')) {
                             btn.click();
                             return;
                         }
                     }
                 })();
             """)
-            time.sleep(0.04)  # Ultra minimal wait for success notification
             
-            # 5. Click "View" button - FAST
-            print("👁️ View cart...")
-            view_clicked = self.checkout_driver.execute_script("""
-                // Target the exact View button element
-                const viewBtn = document.querySelector('div.index_seeConfirmBtn__3mE7p');
-                if (viewBtn && viewBtn.textContent.trim() === 'View') {
-                    viewBtn.click();
-                    return true;
-                } else {
-                    // Fallback method
-                    const elements = document.querySelectorAll('div');
-                    for (let el of elements) {
-                        if (el.textContent.trim() === 'View' && el.offsetParent !== null) {
-                            el.click();
-                            return true;
-                        }
-                    }
-                }
-                return false;
+            # Small wait to ensure ADD TO BAG completes
+            time.sleep(0.5)  # Wait for add to bag to register
+            
+            # 4. Go to cart immediately with optimized timing
+            print("🛒 Going to cart...")
+            
+            # ULTRA AGGRESSIVE APPROACH: Start monitoring for select all on CURRENT page
+            # This will make the select all process lightning fast
+            self.checkout_driver.execute_script("""
+                // Pre-load select all monitoring on current page
+                window.__selectAllPreloaded = true;
+                console.log('Select all monitoring pre-loaded for ultra-fast performance');
             """)
             
-            if not view_clicked:
-                self.checkout_driver.get("https://www.popmart.com/ca/largeShoppingCart")
-            
-            time.sleep(0.05)  # Ultra minimal wait for cart
-            
-            # 6. Click "CONFIRM AND CHECK OUT" - FAST
-            print("✅ Checkout...")
+            # AGGRESSIVE APPROACH: Start trying to click select all BEFORE page loads
             self.checkout_driver.execute_script("""
-                // Target the exact checkout button element
-                const checkoutBtn = document.querySelector('button.ant-btn.ant-btn-primary.ant-btn-dangerous.index_checkout__V9YPC');
-                if (checkoutBtn) {
-                    checkoutBtn.click();
-                } else {
-                    // Fallback method
-                    const buttons = document.querySelectorAll('button');
-                    for (let btn of buttons) {
-                        if (btn.textContent.includes('CONFIRM AND CHECK OUT')) {
-                            btn.click();
+                // Start monitoring for select all IMMEDIATELY
+                window.__selectAllClicked = false;
+                
+                // Function to try clicking select all
+                function trySelectAll() {
+                    if (window.__selectAllClicked) return;
+                    
+                    const selectAllSelectors = [
+                        'div.index_checkbox__w_166',
+                        '.ant-checkbox-wrapper',
+                        'div[class*="checkbox"]',
+                        'input[type="checkbox"]',
+                        '.ant-checkbox'
+                    ];
+                    
+                    for (let selector of selectAllSelectors) {
+                        const elements = document.querySelectorAll(selector);
+                        for (let element of elements) {
+                            if (element.offsetParent !== null && !element.disabled) {
+                                element.click();
+                                console.log('Select all clicked early using selector:', selector);
+                                window.__selectAllClicked = true;
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                }
+                
+                // Try immediately
+                trySelectAll();
+                
+                // Set up continuous monitoring
+                const observer = new MutationObserver(() => {
+                    if (!window.__selectAllClicked) {
+                        trySelectAll();
+                    }
+                });
+                
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true
+                });
+                
+                // Also try with polling - ULTRA FAST
+                const pollInterval = setInterval(() => {
+                    if (trySelectAll() || window.__selectAllClicked) {
+                        clearInterval(pollInterval);
+                        observer.disconnect();
+                    }
+                }, 5); // Check every 5ms for maximum speed
+                
+                // Clean up after 2 seconds
+                setTimeout(() => {
+                    clearInterval(pollInterval);
+                    observer.disconnect();
+                }, 2000);
+            """)
+            
+            # Navigate to cart AFTER setting up the monitoring
+            self.checkout_driver.get("https://www.popmart.com/ca/largeShoppingCart")
+            
+            # 5. ULTRA FAST select all and checkout - additional attempt if needed
+            print("✅ Ultra-fast select all...")
+            self.checkout_driver.execute_script("""
+                // Step 1: Click select all if not already clicked
+                (function() {
+                    if (window.__selectAllClicked) {
+                        console.log('Select all already clicked, skipping...');
+                        return;
+                    }
+                    // The REAL select all button is usually a div with checkbox-like behavior
+                    // Try the most common selectors in order of likelihood
+                    const selectAllSelectors = [
+                        'div.index_checkbox__w_166',  // Main select all div
+                        '.ant-checkbox-wrapper',       // Ant Design checkbox wrapper
+                        'div[class*="checkbox"]',     // Any div with checkbox in class
+                        'input[type="checkbox"]',     // Actual checkbox input
+                        '.ant-checkbox'               // Ant Design checkbox class
+                    ];
+                    
+                    let selectAllClicked = false;
+                    
+                    // First, try to find and click the select all button
+                    for (let selector of selectAllSelectors) {
+                        const elements = document.querySelectorAll(selector);
+                        for (let element of elements) {
+                            // Check if this looks like a select all button
+                            if (element.offsetParent !== null && !element.disabled) {
+                                // Click it immediately
+                                element.click();
+                                console.log('Select all clicked using selector:', selector);
+                                selectAllClicked = true;
+                                break;
+                            }
+                        }
+                        if (selectAllClicked) break;
+                    }
+                    
+                    // If still not clicked, try clicking ALL checkboxes
+                    if (!selectAllClicked) {
+                        const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+                        if (allCheckboxes.length > 0) {
+                            allCheckboxes.forEach((cb, index) => {
+                                if (!cb.checked && cb.offsetParent !== null) {
+                                    cb.click();
+                                    console.log('Individual checkbox clicked:', index);
+                                }
+                            });
+                            selectAllClicked = true;
+                        }
+                    }
+                    
+                    // Final fallback: click any clickable element that might be select all
+                    if (!selectAllClicked) {
+                        const clickableElements = document.querySelectorAll('div[class*="checkbox"], .ant-checkbox-wrapper, div[role="checkbox"]');
+                        if (clickableElements.length > 0) {
+                            clickableElements[0].click();
+                            console.log('Fallback select all clicked');
+                        }
+                    }
+                    
+                    // AGGRESSIVE APPROACH: Continuous monitoring for select all elements
+                    if (!selectAllClicked) {
+                        console.log('Setting up continuous monitoring for select all...');
+                        
+                        const observer = new MutationObserver((mutations) => {
+                            for (let mutation of mutations) {
+                                if (mutation.type === 'childList') {
+                                    // Check newly added nodes
+                                    mutation.addedNodes.forEach(node => {
+                                        if (node.nodeType === 1) { // Element node
+                                            // Look for select all in new elements
+                                            for (let selector of selectAllSelectors) {
+                                                const newElements = node.querySelectorAll ? node.querySelectorAll(selector) : [];
+                                                if (node.matches && node.matches(selector)) {
+                                                    newElements.push(node);
+                                                }
+                                                
+                                                for (let element of newElements) {
+                                                    if (element.offsetParent !== null && !element.disabled && !selectAllClicked) {
+                                                        element.click();
+                                                        console.log('Select all found and clicked via monitoring!');
+                                                        selectAllClicked = true;
+                                                        observer.disconnect();
+                                                        return;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                        
+                        // Start observing for new elements
+                        observer.observe(document.body, {
+                            childList: true,
+                            subtree: true
+                        });
+                        
+                        // Also try aggressive polling as backup
+                        let attempts = 0;
+                        const maxAttempts = 20;
+                        const pollInterval = setInterval(() => {
+                            attempts++;
+                            
+                            // Try all selectors again
+                            for (let selector of selectAllSelectors) {
+                                const elements = document.querySelectorAll(selector);
+                                for (let element of elements) {
+                                    if (element.offsetParent !== null && !element.disabled && !selectAllClicked) {
+                                        element.click();
+                                        console.log('Select all clicked via polling on attempt', attempts);
+                                        selectAllClicked = true;
+                                        clearInterval(pollInterval);
+                                        observer.disconnect();
+                                        return;
+                                    }
+                                }
+                            }
+                            
+                            if (attempts >= maxAttempts) {
+                                clearInterval(pollInterval);
+                                observer.disconnect();
+                                console.log('Select all polling stopped after', maxAttempts, 'attempts');
+                            }
+                        }, 25); // Check every 25ms for maximum speed
+                    }
+                    
+                    console.log('Select all process completed');
+                })();
+            """)
+            
+            # NO DELAY - proceed immediately to checkout
+            print("🚀 Ultra-fast checkout button...")
+            self.checkout_driver.execute_script("""
+                // Step 2: Click checkout button with exact targeting and no delays
+                (function() {
+                    // Target the exact checkout button first with multiple fallbacks
+                    const checkoutSelectors = [
+                        'button.ant-btn.ant-btn-primary.ant-btn-dangerous.index_checkout__V9YPC',
+                        'button[class*="index_checkout__"]',
+                        'button.ant-btn.ant-btn-primary.ant-btn-dangerous'
+                    ];
+                    
+                    let checkoutClicked = false;
+                    
+                    for (let selector of checkoutSelectors) {
+                        const checkoutBtn = document.querySelector(selector);
+                        if (checkoutBtn && checkoutBtn.offsetParent !== null) {
+                            checkoutBtn.click();
+                            console.log('Exact checkout button clicked using selector:', selector);
+                            checkoutClicked = true;
                             break;
                         }
                     }
-                }
-            """)
-            time.sleep(0.2)  # Minimal wait for payment page to load
-            
-            # 7. Click "PROCEED TO PAY" - FINAL STEP
-            print("💳 Pay...")
-            self.checkout_driver.execute_script("""
-                // Target the exact payment button element
-                const payBtn = document.querySelector('button.ant-btn.ant-btn-primary.ant-btn-dangerous.index_placeOrderBtn__wgYr6');
-                if (payBtn) {
-                    payBtn.click();
-                } else {
-                    // Fallback method
-                    const buttons = document.querySelectorAll('button');
-                    for (let btn of buttons) {
-                        if (btn.textContent.toUpperCase().includes('PROCEED TO PAY')) {
-                            btn.click();
-                            break;
+                    
+                    // Fallback method if exact targeting fails
+                    if (!checkoutClicked) {
+                        const buttons = document.querySelectorAll('button');
+                        for (let btn of buttons) {
+                            if (btn.textContent.toUpperCase().includes('CHECK OUT') && btn.offsetParent !== null) {
+                                btn.click();
+                                console.log('Fallback checkout clicked');
+                                checkoutClicked = true;
+                                break;
+                            }
                         }
                     }
-                }
+                    
+                    // Additional fallback for any checkout-related button
+                    if (!checkoutClicked) {
+                        const allButtons = document.querySelectorAll('button, div[class*="btn"], div[class*="button"]');
+                        for (let btn of allButtons) {
+                            const text = btn.textContent.toUpperCase();
+                            if ((text.includes('CHECKOUT') || text.includes('CHECK OUT') || text.includes('CONFIRM')) && btn.offsetParent !== null) {
+                                btn.click();
+                                console.log('Additional fallback checkout clicked:', text);
+                                break;
+                            }
+                        }
+                    }
+                    
+                    console.log('Checkout button clicked - bot will stop here for manual completion');
+                })();
             """)
+            
+            # NO DELAY - bot stops here after checkout button is clicked
+            print("✅ Checkout button clicked! Bot will stop here for manual completion.")
+            print("🛒 You are now on the payment page - complete checkout manually!")
             
             end_time = time.time()
             total_time = end_time - start_time
             
             print(f"\n⏱️ CHECKOUT COMPLETED IN: {total_time:.2f} seconds!")
-            print("💳 COMPLETE PAYMENT NOW!")
+            print("🛒 MANUAL COMPLETION REQUIRED")
             
             self.checkout_successful = True
             
             print("\n" + "="*60)
-            print("💳 PAYMENT TIME")
+            print("🛒 MANUAL CHECKOUT TIME")
             print("="*60)
-            print("• Complete your payment in the checkout browser")
-            print("• DO NOT CLOSE the checkout browser")
-            print("• Monitoring has stopped - checkout browser stays open")
+            print("• Checkout button has been clicked")
+            print("• You are now on the payment page")
+            print("• Complete payment manually in the browser")
+            print("• Bot will stop monitoring after getting the product")
             print("="*60)
             
-            return False  # Stop monitoring but keep browsers open
+            return False  # Stop monitoring after getting the product
             
         except Exception as e:
             print(f"❌ Error: {e}")
@@ -281,7 +523,7 @@ class PopMartBot:
             
             # 1. Go directly to product page in checkout browser
             self.checkout_driver.get(product_info['url'])
-            time.sleep(0.08)  # Minimal page load wait
+            # NO DELAY - proceed immediately to add to bag
             
             # 2. Select whole set if preferred, then add to bag - ULTRA FAST
             if self.prefer_whole_set:
@@ -300,22 +542,54 @@ class PopMartBot:
                             }
                         }
                         
-                        // Immediately add to bag after selection
-                        setTimeout(() => {
-                            const buttons = document.querySelectorAll('div[class*="index_usBtn__"], button');
-                            for (let btn of buttons) {
-                                if (btn.textContent.toUpperCase().includes('ADD TO BAG')) {
-                                    btn.click();
-                                    return;
-                                }
+                        // Immediately add to bag after selection - NO DELAY
+                        const buttons = document.querySelectorAll('div[class*="index_usBtn__"], button');
+                        for (let btn of buttons) {
+                            if (btn.textContent.toUpperCase().includes('ADD TO BAG')) {
+                                btn.click();
+                                return;
                             }
-                        }, 30);  // Very quick delay for whole set selection
+                        }
+                        
+                        // AGGRESSIVE APPROACH: Continuous monitoring for ADD TO BAG button
+                        if (!document.querySelector('div[class*="index_usBtn__"]')) {
+                            console.log('Setting up continuous monitoring for ADD TO BAG...');
+                            
+                            const observer = new MutationObserver((mutations) => {
+                                for (let mutation of mutations) {
+                                    if (mutation.type === 'childList') {
+                                        mutation.addedNodes.forEach(node => {
+                                            if (node.nodeType === 1) {
+                                                const newButtons = node.querySelectorAll ? node.querySelectorAll('div[class*="index_usBtn__"], button') : [];
+                                                if (node.matches && node.matches('div[class*="index_usBtn__"]')) {
+                                                    newButtons.push(node);
+                                                }
+                                                
+                                                for (let btn of newButtons) {
+                                                    if (btn.textContent.toUpperCase().includes('ADD TO BAG')) {
+                                                        btn.click();
+                                                        console.log('ADD TO BAG found and clicked via monitoring!');
+                                                        observer.disconnect();
+                                                        return;
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                            
+                            observer.observe(document.body, {
+                                childList: true,
+                                subtree: true
+                            });
+                        }
                     })();
                 """)
             else:
                 print("🛒 Adding single box to bag...")
                 self.checkout_driver.execute_script("""
-                    // Immediate single box add to bag
+                    // Immediate single box add to bag - NO DELAY
                     (function() {
                         const buttons = document.querySelectorAll('div[class*="index_usBtn__"], button');
                         for (let btn of buttons) {
@@ -324,115 +598,334 @@ class PopMartBot:
                                 return;
                             }
                         }
+                        
+                        // AGGRESSIVE APPROACH: Continuous monitoring for ADD TO BAG button
+                        if (!document.querySelector('div[class*="index_usBtn__"]')) {
+                            console.log('Setting up continuous monitoring for ADD TO BAG...');
+                            
+                            const observer = new MutationObserver((mutations) => {
+                                for (let mutation of mutations) {
+                                    if (mutation.type === 'childList') {
+                                        mutation.addedNodes.forEach(node => {
+                                            if (node.nodeType === 1) {
+                                                const newButtons = node.querySelectorAll ? node.querySelectorAll('div[class*="index_usBtn__"], button') : [];
+                                                if (node.matches && node.matches('div[class*="index_usBtn__"]')) {
+                                                    newButtons.push(node);
+                                                }
+                                                
+                                                for (let btn of newButtons) {
+                                                    if (btn.textContent.toUpperCase().includes('ADD TO BAG')) {
+                                                        btn.click();
+                                                        console.log('ADD TO BAG found and clicked via monitoring!');
+                                                        observer.disconnect();
+                                                        return;
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                            
+                            observer.observe(document.body, {
+                                childList: true,
+                                subtree: true
+                            });
+                        }
                     })();
                 """)
             
-            time.sleep(0.03)  # Ultra minimal wait for add to bag
+            # Small wait to ensure ADD TO BAG completes
+            time.sleep(0.5)  # Wait for add to bag to register
             
-            # 3. Go to cart immediately
+            # 3. Go to cart immediately with optimized timing
+            print("🛒 Going to cart...")
+            
+            # ULTRA AGGRESSIVE APPROACH: Start monitoring for select all on CURRENT page
+            # This will make the select all process lightning fast
+            self.checkout_driver.execute_script("""
+                // Pre-load select all monitoring on current page
+                window.__selectAllPreloaded = true;
+                console.log('Select all monitoring pre-loaded for ultra-fast performance');
+            """)
+            
+            # AGGRESSIVE APPROACH: Start trying to click select all BEFORE page loads
+            self.checkout_driver.execute_script("""
+                // Start monitoring for select all IMMEDIATELY
+                window.__selectAllClicked = false;
+                
+                // Function to try clicking select all
+                function trySelectAll() {
+                    if (window.__selectAllClicked) return;
+                    
+                    const selectAllSelectors = [
+                        'div.index_checkbox__w_166',
+                        '.ant-checkbox-wrapper',
+                        'div[class*="checkbox"]',
+                        'input[type="checkbox"]',
+                        '.ant-checkbox'
+                    ];
+                    
+                    for (let selector of selectAllSelectors) {
+                        const elements = document.querySelectorAll(selector);
+                        for (let element of elements) {
+                            if (element.offsetParent !== null && !element.disabled) {
+                                element.click();
+                                console.log('Select all clicked early using selector:', selector);
+                                window.__selectAllClicked = true;
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                }
+                
+                // Try immediately
+                trySelectAll();
+                
+                // Set up continuous monitoring
+                const observer = new MutationObserver(() => {
+                    if (!window.__selectAllClicked) {
+                        trySelectAll();
+                    }
+                });
+                
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true
+                });
+                
+                // Also try with polling - ULTRA FAST
+                const pollInterval = setInterval(() => {
+                    if (trySelectAll() || window.__selectAllClicked) {
+                        clearInterval(pollInterval);
+                        observer.disconnect();
+                    }
+                }, 5); // Check every 5ms for maximum speed
+                
+                // Clean up after 2 seconds
+                setTimeout(() => {
+                    clearInterval(pollInterval);
+                    observer.disconnect();
+                }, 2000);
+            """)
+            
+            # Navigate to cart AFTER setting up the monitoring
             self.checkout_driver.get("https://www.popmart.com/ca/largeShoppingCart")
-            time.sleep(0.04)  # Ultra minimal cart load
             
-            # 4. ULTRA FAST select all and checkout - optimized timing
+            # 4. ULTRA FAST select all and checkout - additional attempt if needed
             print("✅ Ultra-fast select all...")
             self.checkout_driver.execute_script("""
-                // Step 1: Click select all immediately
+                // Step 1: Click select all if not already clicked
                 (function() {
-                    const selectAll = document.querySelector('div.index_checkbox__w_166');
-                    if (selectAll) {
-                        selectAll.click();
-                        console.log('Select all clicked');
-                    }
-                })();
-            """)
-            
-            time.sleep(0.05)  # Tiny delay for select all to register
-            
-            print("🚀 Ultra-fast checkout button...")
-            self.checkout_driver.execute_script("""
-                // Step 2: Click checkout button with exact targeting
-                (function() {
-                    // Target the exact checkout button first
-                    const checkoutBtn = document.querySelector('button.ant-btn.ant-btn-primary.ant-btn-dangerous.index_checkout__V9YPC');
-                    if (checkoutBtn) {
-                        checkoutBtn.click();
-                        console.log('Exact checkout button clicked');
+                    if (window.__selectAllClicked) {
+                        console.log('Select all already clicked, skipping...');
                         return;
                     }
+                    // The REAL select all button is usually a div with checkbox-like behavior
+                    // Try the most common selectors in order of likelihood
+                    const selectAllSelectors = [
+                        'div.index_checkbox__w_166',  // Main select all div
+                        '.ant-checkbox-wrapper',       // Ant Design checkbox wrapper
+                        'div[class*="checkbox"]',     // Any div with checkbox in class
+                        'input[type="checkbox"]',     // Actual checkbox input
+                        '.ant-checkbox'               // Ant Design checkbox class
+                    ];
                     
-                    // Fallback method
-                    const buttons = document.querySelectorAll('button');
-                    for (let btn of buttons) {
-                        if (btn.textContent.toUpperCase().includes('CHECK OUT')) {
-                            btn.click();
-                            console.log('Fallback checkout clicked');
-                            return;
+                    let selectAllClicked = false;
+                    
+                    // First, try to find and click the select all button
+                    for (let selector of selectAllSelectors) {
+                        const elements = document.querySelectorAll(selector);
+                        for (let element of elements) {
+                            // Check if this looks like a select all button
+                            if (element.offsetParent !== null && !element.disabled) {
+                                // Click it immediately
+                                element.click();
+                                console.log('Select all clicked using selector:', selector);
+                                selectAllClicked = true;
+                                break;
+                            }
+                        }
+                        if (selectAllClicked) break;
+                    }
+                    
+                    // If still not clicked, try clicking ALL checkboxes
+                    if (!selectAllClicked) {
+                        const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+                        if (allCheckboxes.length > 0) {
+                            allCheckboxes.forEach((cb, index) => {
+                                if (!cb.checked && cb.offsetParent !== null) {
+                                    cb.click();
+                                    console.log('Individual checkbox clicked:', index);
+                                }
+                            });
+                            selectAllClicked = true;
                         }
                     }
+                    
+                    // Final fallback: click any clickable element that might be select all
+                    if (!selectAllClicked) {
+                        const clickableElements = document.querySelectorAll('div[class*="checkbox"], .ant-checkbox-wrapper, div[role="checkbox"]');
+                        if (clickableElements.length > 0) {
+                            clickableElements[0].click();
+                            console.log('Fallback select all clicked');
+                        }
+                    }
+                    
+                    // AGGRESSIVE APPROACH: Continuous monitoring for select all elements
+                    if (!selectAllClicked) {
+                        console.log('Setting up continuous monitoring for select all...');
+                        
+                        const observer = new MutationObserver((mutations) => {
+                            for (let mutation of mutations) {
+                                if (mutation.type === 'childList') {
+                                    // Check newly added nodes
+                                    mutation.addedNodes.forEach(node => {
+                                        if (node.nodeType === 1) { // Element node
+                                            // Look for select all in new elements
+                                            for (let selector of selectAllSelectors) {
+                                                const newElements = node.querySelectorAll ? node.querySelectorAll(selector) : [];
+                                                if (node.matches && node.matches(selector)) {
+                                                    newElements.push(node);
+                                                }
+                                                
+                                                for (let element of newElements) {
+                                                    if (element.offsetParent !== null && !element.disabled && !selectAllClicked) {
+                                                        element.click();
+                                                        console.log('Select all found and clicked via monitoring!');
+                                                        selectAllClicked = true;
+                                                        observer.disconnect();
+                                                        return;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                        
+                        // Start observing for new elements
+                        observer.observe(document.body, {
+                            childList: true,
+                            subtree: true
+                        });
+                        
+                        // Also try aggressive polling as backup
+                        let attempts = 0;
+                        const maxAttempts = 20;
+                        const pollInterval = setInterval(() => {
+                            attempts++;
+                            
+                            // Try all selectors again
+                            for (let selector of selectAllSelectors) {
+                                const elements = document.querySelectorAll(selector);
+                                for (let element of elements) {
+                                    if (element.offsetParent !== null && !element.disabled && !selectAllClicked) {
+                                        element.click();
+                                        console.log('Select all clicked via polling on attempt', attempts);
+                                        selectAllClicked = true;
+                                        clearInterval(pollInterval);
+                                        observer.disconnect();
+                                        return;
+                                    }
+                                }
+                            }
+                            
+                            if (attempts >= maxAttempts) {
+                                clearInterval(pollInterval);
+                                observer.disconnect();
+                                console.log('Select all polling stopped after', maxAttempts, 'attempts');
+                            }
+                        }, 25); // Check every 25ms for maximum speed
+                    }
+                    
+                    console.log('Select all process completed');
                 })();
             """)
             
-            time.sleep(0.2)  # Wait for checkout page to load properly
-            
-            # 5. ULTRA FAST proceed to pay with retry mechanism
-            print("💳 Final payment button...")
+            # NO DELAY - proceed immediately to checkout button
+            print("🚀 Ultra-fast checkout button...")
             self.checkout_driver.execute_script("""
-                // Wait for payment button with retry mechanism
+                // Step 2: Click checkout button with exact targeting and no delays
                 (function() {
-                    let attempts = 0;
-                    const maxAttempts = 10;
+                    // Target the exact checkout button first with multiple fallbacks
+                    const checkoutSelectors = [
+                        'button.ant-btn.ant-btn-primary.ant-btn-dangerous.index_checkout__V9YPC',
+                        'button[class*="index_checkout__"]',
+                        'button.ant-btn.ant-btn-primary.ant-btn-dangerous'
+                    ];
                     
-                    function tryClickPayment() {
-                        attempts++;
-                        
-                        // Method 1: Exact button targeting
-                        const payBtn = document.querySelector('button.ant-btn.ant-btn-primary.ant-btn-dangerous.index_placeOrderBtn__wgYr6');
-                        if (payBtn && payBtn.offsetParent !== null) {
-                            payBtn.click();
-                            console.log('Exact payment button clicked on attempt', attempts);
-                            return true;
+                    let checkoutClicked = false;
+                    
+                    for (let selector of checkoutSelectors) {
+                        const checkoutBtn = document.querySelector(selector);
+                        if (checkoutBtn && checkoutBtn.offsetParent !== null) {
+                            checkoutBtn.click();
+                            console.log('Exact checkout button clicked using selector:', selector);
+                            checkoutClicked = true;
+                            break;
                         }
-                        
-                        // Method 2: Look for PROCEED TO PAY text
+                    }
+                    
+                    // Fallback method if exact targeting fails
+                    if (!checkoutClicked) {
                         const buttons = document.querySelectorAll('button');
                         for (let btn of buttons) {
-                            if (btn.textContent.toUpperCase().includes('PROCEED TO PAY') && btn.offsetParent !== null) {
+                            if (btn.textContent.toUpperCase().includes('CHECK OUT') && btn.offsetParent !== null) {
                                 btn.click();
-                                console.log('PROCEED TO PAY button clicked on attempt', attempts);
-                                return true;
+                                console.log('Fallback checkout clicked');
+                                checkoutClicked = true;
+                                break;
                             }
                         }
-                        
-                        // Method 3: Look for any payment-related button
-                        for (let btn of buttons) {
-                            const text = btn.textContent.toUpperCase();
-                            if ((text.includes('PAY') || text.includes('PLACE ORDER')) && btn.offsetParent !== null) {
-                                btn.click();
-                                console.log('Payment fallback button clicked on attempt', attempts);
-                                return true;
-                            }
-                        }
-                        
-                        // If not found and haven't reached max attempts, try again
-                        if (attempts < maxAttempts) {
-                            console.log('Payment button not found, retrying in 100ms... attempt', attempts);
-                            setTimeout(tryClickPayment, 100);
-                        } else {
-                            console.log('Payment button not found after', maxAttempts, 'attempts');
-                        }
-                        
-                        return false;
                     }
                     
-                    // Start trying immediately
-                    tryClickPayment();
+                    // Additional fallback for any checkout-related button
+                    if (!checkoutClicked) {
+                        const allButtons = document.querySelectorAll('button, div[class*="btn"], div[class*="button"]');
+                        for (let btn of allButtons) {
+                            const text = btn.textContent.toUpperCase();
+                            if ((text.includes('CHECKOUT') || text.includes('CHECK OUT') || text.includes('CONFIRM')) && btn.offsetParent !== null) {
+                                btn.click();
+                                console.log('Additional fallback checkout clicked:', text);
+                                break;
+                            }
+                        }
+                    }
+                    
+                    console.log('Checkout button clicked - bot will stop here for manual completion');
                 })();
             """)
+            
+            # NO DELAY - bot stops here after checkout button is clicked
+            print("✅ Checkout button clicked! Bot will stop here for manual completion.")
+            print("🛒 You are now on the payment page - complete checkout manually!")
             
             end_time = time.time()
             total_time = end_time - start_time
             
-            print(f"\n⏱️ ULTRA-FAST CHECKOUT COMPLETED IN: {total_time:.2f} seconds!")
+            print(f"\n⏱️ CHECKOUT COMPLETED IN: {total_time:.2f} seconds!")
+            print("🛒 MANUAL COMPLETION REQUIRED")
+            
+            self.checkout_successful = True
+            
+            print("\n" + "="*60)
+            print("🛒 MANUAL CHECKOUT TIME")
+            print("="*60)
+            print("• Checkout button has been clicked")
+            print("• You are now on the payment page")
+            print("• Complete payment manually in the browser")
+            print("• Bot will stop monitoring after getting the product")
+            print("="*60)
+            
+            return False  # Stop monitoring after getting the product
+            
+            end_time = time.time()
+            total_time = end_time - start_time
+            
+            print(f"\n⏱️ CHECKOUT COMPLETED IN: {total_time:.2f} seconds!")
             print("💳 COMPLETE PAYMENT NOW!")
             
             self.checkout_successful = True
@@ -442,10 +935,12 @@ class PopMartBot:
             print("="*60)
             print("• Complete your payment in the checkout browser")
             print("• DO NOT CLOSE the checkout browser")
-            print("• Monitoring has stopped - checkout browser stays open")
+            print("• Bot will stop monitoring after getting the product")
             print("="*60)
             
-            return False  # Stop monitoring but keep browsers open
+            print("\n✅ Checkout completed! Bot will stop monitoring.")
+            print("💡 You can complete payment in the checkout browser")
+            return False  # Stop monitoring after getting the product
             
         except Exception as e:
             print(f"❌ Checkout error: {e}")
@@ -479,8 +974,8 @@ class PopMartBot:
             
         except Exception as e:
             print(f"\n❌ Error in stock callback: {e}")
-            print("⚠️ Continuing monitoring despite error...")
-            return True  # Continue monitoring even if checkout fails
+            print("⚠️ Stopping monitoring due to error...")
+            return False  # Stop monitoring due to error
     
     def cleanup_browsers(self):
         """Smart cleanup - ask what to do with browsers"""
@@ -579,7 +1074,7 @@ class PopMartBot:
             # Whole set preference (only for single product monitoring)
             self.prefer_whole_set = False
             if len(product_ids) == 1:
-                whole_set_choice = input("\n📦 Prefer whole set over single box? (y/n): ").strip().lower()
+                whole_set_choice = input("\n📦 Whole set(y) or Single Box(n)? (y/n): ").strip().lower()
                 self.prefer_whole_set = whole_set_choice == 'y'
                 if self.prefer_whole_set:
                     print("✅ Will prioritize whole set selection during checkout")

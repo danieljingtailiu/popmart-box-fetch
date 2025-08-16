@@ -167,14 +167,14 @@ class UnifiedPopMartMonitor:
                     setInterval(() => {
                         this.findAndCheckButton();
                         this.checkCount++;  // Increment on every poll
-                    }, 250); // 4 checks per second
+                    }, 100); // Increased from 250ms to 100ms - 10 checks per second for faster detection
                 },
                 
                 startAnimationFrameMonitor: function() {
                     let frameCount = 0;
                     const check = () => {
                         frameCount++;
-                        if (frameCount % 60 === 0) {  // Every 60 frames (roughly 1 second at 60fps)
+                        if (frameCount % 30 === 0) {  // Reduced from 60 to 30 frames - check every 0.5 seconds instead of 1 second
                             this.checkCount++;
                         }
                         this.findAndCheckButton();
@@ -323,14 +323,14 @@ class UnifiedPopMartMonitor:
                     setInterval(() => {
                         this.findAndCheckButton();
                         this.checkCount++;  // Increment on every poll
-                    }, 250); // 4 checks per second
+                    }, 100); // Increased from 250ms to 100ms - 10 checks per second for faster detection
                 },
                 
                 startAnimationFrameMonitor: function() {
                     let frameCount = 0;
                     const check = () => {
                         frameCount++;
-                        if (frameCount % 60 === 0) {  // Every 60 frames (roughly 1 second at 60fps)
+                        if (frameCount % 30 === 0) {  // Reduced from 60 to 30 frames - check every 0.5 seconds instead of 1 second
                             this.checkCount++;
                         }
                         this.findAndCheckButton();
