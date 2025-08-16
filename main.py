@@ -32,7 +32,7 @@ class PopMartBot:
             headless=False,
             incognito=False,
             undetectable=True,
-            page_load_strategy='none'  # Don't wait for any resources - FASTEST
+            page_load_strategy='none'  # Skip waiting for resources to load - makes it super fast
         )
         
         self.monitor = UnifiedPopMartMonitor(self.monitor_driver)
@@ -48,10 +48,10 @@ class PopMartBot:
             incognito=False,
             undetectable=True,
             uc_cdp_events=True,
-            page_load_strategy='none'  # Don't wait for any resources - FASTEST
+            page_load_strategy='none'  # Skip waiting for resources to load - makes it super fast
         )
         
-        # Extra stealth for checkout browser
+        # Make the checkout browser harder to detect
         self.checkout_driver.execute_cdp_cmd('Page.addScriptToEvaluateOnNewDocument', {
             'source': '''
                 delete window.cdc_adoQpoasnfa76pfcZLmcfl_Array;
@@ -60,7 +60,7 @@ class PopMartBot:
             '''
         })
         
-        # Pre-inject speed optimization script
+        # Inject a script to speed things up
         self.checkout_driver.execute_cdp_cmd('Page.addScriptToEvaluateOnNewDocument', {
             'source': '''
                 // Speed up setTimeout/setInterval
@@ -93,16 +93,16 @@ class PopMartBot:
         input("\n✅ Press ENTER when logged in...")
         print("Login confirmed!")
         
-        # Pre-warm the browser by visiting key pages
+        # Warm up the browser by visiting some key pages first
         print("⚡ Pre-warming checkout browser...")
         self.checkout_driver.get("https://www.popmart.com/ca")
-        time.sleep(0.2)  # Much faster pre-warming
+        time.sleep(0.2)  # Quick warm-up, much faster than before
         
-        # Pre-visit cart to cache resources
+        # Visit the cart page to cache some resources
         self.checkout_driver.execute_script("window.open('https://www.popmart.com/ca/largeShoppingCart', '_blank');")
-        time.sleep(0.2)  # Much faster cart pre-loading
+        time.sleep(0.2)  # Quick cart pre-load, much faster than before
         
-        # Close the extra tab
+        # Close that extra tab we opened
         handles = self.checkout_driver.window_handles
         if len(handles) > 1:
             self.checkout_driver.switch_to.window(handles[1])
@@ -120,21 +120,21 @@ class PopMartBot:
             print(f"\n⚡ POPNOW LIGHTNING CHECKOUT: {product_info['product_name']}")
             start_time = time.time()
             
-            # 1. Go to PopNow page - ULTRA FAST
+            # 1. Go to the PopNow page - super fast
             self.checkout_driver.get(product_info['url'])
-            time.sleep(0.2)  # Minimal wait for page load
+            time.sleep(0.2)  # Just a tiny wait for the page to load
             
-            # 2. Click "Buy Multiple Boxes" - ULTRA FAST
+            # 2. Click the "Buy Multiple Boxes" button - super fast
             print("📦 Buy Multiple Boxes...")
             self.checkout_driver.execute_script("""
-                // Immediate execution - no delays
+                // Run this immediately - no waiting around
                 (function() {
                     const buyBtn = document.querySelector('button.ant-btn.ant-btn-ghost.index_chooseMulitityBtn__n0MoA');
                     if (buyBtn && buyBtn.textContent.includes('Buy Multiple Boxes')) {
                         buyBtn.click();
                         return;
                     }
-                    // Ultra fast fallback
+                    // Quick fallback if the first method doesn't work
                     const buttons = document.querySelectorAll('button');
                     for (let btn of buttons) {
                         if (btn.textContent.includes('Buy Multiple Boxes')) {
@@ -144,15 +144,15 @@ class PopMartBot:
                     }
                 })();
             """)
-            time.sleep(0.03)  # Ultra minimal wait for modal
+            time.sleep(0.03)  # Tiny wait for the modal to pop up
             
-            # 3. ULTRA FAST SELECT ALL checkbox
+            # 3. Super fast select all checkbox
             print("☑️ Select all...")
             self.checkout_driver.execute_script("""
-                // Immediate execution - no setTimeout delays
+                // Run this right away - no setTimeout delays
                 (function() {
-                    // The REAL select all button is usually a div with checkbox-like behavior
-                    // Try the most common selectors in order of likelihood
+                    // The real select all button is usually a div that acts like a checkbox
+                    // Try the most common selectors first, in order of how likely they are to work
                     const selectAllSelectors = [
                         'div.index_checkbox__w_166',  // Main select all div
                         '.ant-checkbox-wrapper',       // Ant Design checkbox wrapper
@@ -169,7 +169,7 @@ class PopMartBot:
                         for (let element of elements) {
                             // Check if this looks like a select all button
                             if (element.offsetParent !== null && !element.disabled) {
-                                // Click it immediately
+                                // Click it right away
                                 element.click();
                                 console.log('Select all clicked using selector:', selector);
                                 selectAllClicked = true;
@@ -179,7 +179,7 @@ class PopMartBot:
                         if (selectAllClicked) break;
                     }
                     
-                    // If still not clicked, try clicking ALL checkboxes
+                    // If we still haven't clicked anything, try clicking all the checkboxes
                     if (!selectAllClicked) {
                         const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
                         if (allCheckboxes.length > 0) {
@@ -193,7 +193,7 @@ class PopMartBot:
                         }
                     }
                     
-                    // Final fallback: click any clickable element that might be select all
+                    // Last resort: click anything that might be a select all button
                     if (!selectAllClicked) {
                         const clickableElements = document.querySelectorAll('div[class*="checkbox"], .ant-checkbox-wrapper, div[role="checkbox"]');
                         if (clickableElements.length > 0) {
@@ -206,10 +206,10 @@ class PopMartBot:
                 })();
             """)
             
-            # NO DELAY - proceed immediately to add to bag
+            # No waiting around - go straight to adding to bag
             print("🛒 Add to bag...")
             self.checkout_driver.execute_script("""
-                // Immediate single box add to bag
+                // Add the single box to bag right away
                 (function() {
                     const buttons = document.querySelectorAll('div[class*="index_usBtn__"], button');
                     for (let btn of buttons) {
@@ -221,10 +221,10 @@ class PopMartBot:
                 })();
             """)
             
-            # Small wait to ensure ADD TO BAG completes
-            time.sleep(0.5)  # Wait for add to bag to register
+            # Small wait to make sure the add to bag action completes
+            time.sleep(0.5)  # Give it a moment to register with the server
             
-            # 4. Go to cart immediately with optimized timing
+            # 4. Go to cart right away with optimized timing
             print("🛒 Going to cart...")
             
             # ULTRA AGGRESSIVE APPROACH: Start monitoring for select all on CURRENT page
@@ -299,7 +299,7 @@ class PopMartBot:
             # Navigate to cart AFTER setting up the monitoring
             self.checkout_driver.get("https://www.popmart.com/ca/largeShoppingCart")
             
-            # 5. ULTRA FAST select all and checkout - additional attempt if needed
+            # 5. Super fast select all and checkout - give it another try if needed
             print("✅ Ultra-fast select all...")
             self.checkout_driver.execute_script("""
                 // Step 1: Click select all if not already clicked
@@ -431,7 +431,7 @@ class PopMartBot:
                 })();
             """)
             
-            # NO DELAY - proceed immediately to checkout
+            # No waiting around - go straight to checkout
             print("🚀 Ultra-fast checkout button...")
             self.checkout_driver.execute_script("""
                 // Step 2: Click checkout button with exact targeting and no delays
@@ -521,15 +521,15 @@ class PopMartBot:
             print(f"\n⚡ ULTRA-FAST CHECKOUT: {product_info['product_name']}")
             start_time = time.time()
             
-            # 1. Go directly to product page in checkout browser
+            # 1. Go directly to the product page in the checkout browser
             self.checkout_driver.get(product_info['url'])
-            # NO DELAY - proceed immediately to add to bag
+            # No waiting around - go straight to adding to bag
             
-            # 2. Select whole set if preferred, then add to bag - ULTRA FAST
+            # 2. Select whole set if preferred, then add to bag - super fast
             if self.prefer_whole_set:
                 print("📦 Selecting whole set...")
                 self.checkout_driver.execute_script("""
-                    // Immediate execution - select whole set first
+                    // Run this right away - select the whole set first
                     (function() {
                         // Look for whole set option
                         const wholeSets = document.querySelectorAll('div.index_sizeInfoItem__f_Uxb');
@@ -542,7 +542,7 @@ class PopMartBot:
                             }
                         }
                         
-                        // Immediately add to bag after selection - NO DELAY
+                        // Add to bag right after selection - no waiting around
                         const buttons = document.querySelectorAll('div[class*="index_usBtn__"], button');
                         for (let btn of buttons) {
                             if (btn.textContent.toUpperCase().includes('ADD TO BAG')) {
@@ -589,7 +589,7 @@ class PopMartBot:
             else:
                 print("🛒 Adding single box to bag...")
                 self.checkout_driver.execute_script("""
-                    // Immediate single box add to bag - NO DELAY
+                    // Add the single box to bag right away - no waiting around
                     (function() {
                         const buttons = document.querySelectorAll('div[class*="index_usBtn__"], button');
                         for (let btn of buttons) {
@@ -638,7 +638,7 @@ class PopMartBot:
             # Small wait to ensure ADD TO BAG completes
             time.sleep(0.5)  # Wait for add to bag to register
             
-            # 3. Go to cart immediately with optimized timing
+            # 3. Go to cart right away with optimized timing
             print("🛒 Going to cart...")
             
             # ULTRA AGGRESSIVE APPROACH: Start monitoring for select all on CURRENT page
@@ -713,7 +713,7 @@ class PopMartBot:
             # Navigate to cart AFTER setting up the monitoring
             self.checkout_driver.get("https://www.popmart.com/ca/largeShoppingCart")
             
-            # 4. ULTRA FAST select all and checkout - additional attempt if needed
+            # 4. Super fast select all and checkout - give it another try if needed
             print("✅ Ultra-fast select all...")
             self.checkout_driver.execute_script("""
                 // Step 1: Click select all if not already clicked
@@ -845,7 +845,7 @@ class PopMartBot:
                 })();
             """)
             
-            # NO DELAY - proceed immediately to checkout button
+            # No waiting around - go straight to the checkout button
             print("🚀 Ultra-fast checkout button...")
             self.checkout_driver.execute_script("""
                 // Step 2: Click checkout button with exact targeting and no delays
@@ -1091,24 +1091,24 @@ class PopMartBot:
             print("🔍 Bot will auto-detect product types")
             print(f"{'='*60}")
             
-            # Navigate to first product
+            # Navigate to the first product
             if len(product_ids) == 1:
                 print("\n📍 Navigating to product page...")
                 
-                # Try to get URL from config, or construct it
+                # Try to get the URL from config, or construct it
                 if product_ids[0] in self.monitor.products:
                     product_url = self.monitor.products[product_ids[0]]['url']
                 else:
-                    # Guess URL based on ID pattern
+                    # Guess the URL based on ID pattern
                     if len(product_ids[0]) == 3 and product_ids[0].isdigit():
                         product_url = f"https://www.popmart.com/ca/pop-now/set/{product_ids[0]}"
                     else:
                         product_url = f"https://www.popmart.com/ca/products/{product_ids[0]}/"
                 
                 self.monitor_driver.get(product_url)
-                time.sleep(0.8)  # Much faster navigation
+                time.sleep(0.8)  # Much faster navigation than before
                 
-                # Auto-detect type
+                # Auto-detect the type
                 detected_type = self.monitor.detect_product_type()
                 print(f"✅ Detected product type: {detected_type.upper()}")
                 
@@ -1137,16 +1137,16 @@ class PopMartBot:
 
 
 if __name__ == "__main__":
-    # Check for dependencies
-    try:
-        from seleniumbase import Driver
-        from unified_monitor import UnifiedPopMartMonitor
-    except ImportError as e:
-        print("❌ Missing dependencies!")
-        print("Please install: pip install seleniumbase")
-        print(f"Error: {e}")
-        exit(1)
-    
-    # Run bot
-    bot = PopMartBot()
-    bot.run() 
+            # Check if we have all the required packages
+        try:
+            from seleniumbase import Driver
+            from unified_monitor import UnifiedPopMartMonitor
+        except ImportError as e:
+            print("❌ Missing dependencies!")
+            print("Please install: pip install seleniumbase")
+            print(f"Error: {e}")
+            exit(1)
+        
+        # Start the bot
+        bot = PopMartBot()
+        bot.run() 

@@ -10,6 +10,15 @@
 
 PopMart Unified Bot is a smart automation system that monitors PopMart products and handles checkout automatically. It works with **both regular products and PopNow mystery box sets**, automatically detecting which type you're monitoring without any configuration needed.
 
+## ⚠️ **IMPORTANT: Manual Payment Required**
+
+**🛑 The bot does NOT complete payment automatically for security reasons**
+
+- **What the bot does**: Monitors stock, adds items to cart, clicks "CHECK OUT"
+- **What the bot does NOT do**: Enter payment info, click "PROCEED TO PAY", complete transaction
+- **Your responsibility**: Complete payment manually on the payment page
+- **Why**: Keeps your payment information private and secure
+
 ### 🧠 **Smart Features**
 - **Auto-Detection**: Automatically figures out if you're monitoring regular products or PopNow sets
 - **Lightning-Fast Monitoring**: Uses advanced techniques to catch restocks the moment they happen
@@ -167,15 +176,21 @@ Your choice: 2710
    📦 Buy Multiple Boxes... (for PopNow)
    🛒 Add to bag...
    ✅ Checkout...
-   💳 Pay...
    ```
 
-3. **Payment page opens** - **YOU MUST COMPLETE PAYMENT MANUALLY**
+3. **🛑 BOT STOPS HERE** - **MANUAL PAYMENT REQUIRED**
 
-### **Step 8: Complete Payment**
-1. **Payment page is ready** in the checkout browser
-2. **Complete your payment quickly**
-3. **Don't close the browser** until payment is done
+### **Step 8: Manual Payment Completion**
+**⚠️ IMPORTANT: The bot does NOT complete payment automatically**
+
+1. **Bot clicks "CHECK OUT" button** and stops
+2. **Payment page opens** in the checkout browser
+3. **YOU must complete payment manually**:
+   - Enter shipping address
+   - Enter payment information
+   - Click "PROCEED TO PAY" or similar final button
+4. **Bot will NOT click payment buttons** for security reasons
+5. **Don't close the browser** until payment is confirmed
 
 ---
 
@@ -263,19 +278,20 @@ Your choice: 2710
 
 ⚡ QUICK CHECKOUT: THE MONSTERS Big into Energy Series
 🛒 Add to bag...
-👁️ Cart...
-✅ Checkout...
-💳 Pay...
+🛒 Going to cart...
+✅ Ultra-fast select all...
+🚀 Ultra-fast checkout button...
 
 ⏱️ CHECKOUT COMPLETED IN: 2.34 seconds!
-💳 COMPLETE PAYMENT NOW!
+🛒 MANUAL COMPLETION REQUIRED
 
 ============================================================
-💳 PAYMENT TIME
+🛒 MANUAL CHECKOUT TIME
 ============================================================
-• Complete your payment in the checkout browser
-• DO NOT CLOSE the checkout browser
-• Monitoring has stopped - checkout browser stays open
+• Checkout button has been clicked
+• You are now on the payment page
+• Complete payment manually in the browser
+• Bot will stop monitoring after getting the product
 ============================================================
 ```
 
@@ -316,18 +332,19 @@ Triple Monitoring Approach:
 1. Click "Buy Multiple Boxes" button
 2. Select all checkboxes automatically
 3. Click "ADD TO BAG"
-4. Click "View" to go to cart
-5. Click "Confirm and Check out"
-6. Click "PROCEED TO PAY"
-7. User completes payment
+4. Go to cart automatically
+5. Click "Select All" checkbox
+6. Click "CHECK OUT" button
+7. **🛑 BOT STOPS HERE** - User completes payment manually
 
 ### **Regular Product Checkout**
 1. Click "ADD TO BAG" button
 2. Go to cart automatically
-3. Select all items
-4. Click checkout
-5. Click "PROCEED TO PAY"
-6. User completes payment
+3. Click "Select All" checkbox
+4. Click "CHECK OUT" button
+5. **🛑 BOT STOPS HERE** - User completes payment manually
+
+**Note**: The bot intentionally stops at the checkout page for security reasons. You must complete payment manually.
 
 ## 🛡️ **Safety Features**
 
@@ -385,6 +402,8 @@ Triple Monitoring Approach:
 4. **Try off-peak hours**: Early morning (6-8 AM) or late night (11 PM-1 AM)
 5. **Keep browsers open**: Don't close them between sessions
 6. **For LABUBU**: Be extra quick with payment completion
+7. **Payment speed is crucial**: The bot gets you to checkout fast, but you must complete payment quickly
+8. **Pre-save payment info**: Have shipping address and payment method ready in browser
 
 ## 🤝 **Contributing**
 
