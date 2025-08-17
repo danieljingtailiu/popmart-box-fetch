@@ -143,14 +143,22 @@ The bot will start and show you the welcome screen.
 Your choice: 2710
 ```
 
-### **Step 5: Enable Auto-Checkout**
+### **Step 5: Choose Whole Set or Single Box (Single Product Only)**
+```
+📦 Whole set(y) or Single Box(n)? (y/n): y
+```
+- **Type `y`** - Bot will prioritize whole set selection during checkout
+- **Type `n`** - Bot will add single box to bag
+- **Note**: This option only appears when monitoring a single product
+
+### **Step 6: Enable Auto-Checkout**
 ```
 🤖 Enable auto-checkout? (y/n): y
 ```
 - **Type `y`** - Bot will automatically checkout when stock is found
 - **Type `n`** - Bot will only alert you (no automatic purchase)
 
-### **Step 6: Start Monitoring**
+### **Step 7: Start Monitoring**
 ```
 ✅ Press ENTER to START monitoring...
 ```
@@ -161,7 +169,7 @@ Your choice: 2710
    🟢 Checks: 1,234 | Status: Out of Stock (BLACK) | Type: NORMAL
    ```
 
-### **Step 7: When Stock is Found**
+### **Step 8: When Stock is Found**
 **If stock becomes available:**
 1. **Bot detects instantly** and shows:
    ```
@@ -180,7 +188,7 @@ Your choice: 2710
 
 3. **🛑 BOT STOPS HERE** - **MANUAL PAYMENT REQUIRED**
 
-### **Step 8: Manual Payment Completion**
+### **Step 9: Manual Payment Completion**
 **⚠️ IMPORTANT: The bot does NOT complete payment automatically**
 
 1. **Bot clicks "CHECK OUT" button** and stops
@@ -239,6 +247,8 @@ Your choice: 2710
   - Enter any ID (bot will auto-detect type)
 
 Your choice: 2710
+
+📦 Whole set(y) or Single Box(n)? (y/n): y
 
 🤖 Enable auto-checkout? (y/n): y
 
@@ -338,11 +348,12 @@ Triple Monitoring Approach:
 7. **🛑 BOT STOPS HERE** - User completes payment manually
 
 ### **Regular Product Checkout**
-1. Click "ADD TO BAG" button
-2. Go to cart automatically
-3. Click "Select All" checkbox
-4. Click "CHECK OUT" button
-5. **🛑 BOT STOPS HERE** - User completes payment manually
+1. **Choose whole set or single box** (if whole set preference enabled)
+2. Click "ADD TO BAG" button
+3. Go to cart automatically
+4. Click "Select All" checkbox
+5. Click "CHECK OUT" button
+6. **🛑 BOT STOPS HERE** - User completes payment manually
 
 **Note**: The bot intentionally stops at the checkout page for security reasons. You must complete payment manually.
 
