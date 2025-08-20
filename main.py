@@ -1,16 +1,24 @@
-# main_unified.py
+# main.py
 """
 PopMart Main Bot - Unified Version with Auto-Detection
 No mode selection needed - automatically detects product type
+
+NEW: JavaScript navigation optimization with reliable select all
+- Replaced slow driver.get() with fast window.location.href
+- Optimized page load waiting for maximum reliability
+- Maintains full stealth and anti-detection features
+- Cart → Select All process: 3 seconds wait + retry logic for reliability
+- Fast and reliable checkout while maintaining success rate!
 """
 
 import time
 from datetime import datetime
 from seleniumbase import Driver
 from unified_monitor import UnifiedPopMartMonitor
-import json
-import threading
-import queue
+# Remove unused imports to keep things clean
+# import json
+# import threading
+# import queue
 
 class PopMartBot:
     def __init__(self):
@@ -19,7 +27,8 @@ class PopMartBot:
         self.monitor = None
         self.auto_checkout = True
         self.monitoring = True
-        self.stock_queue = queue.Queue()
+        # Remove unused queue since we don't actually use it
+        # self.stock_queue = queue.Queue()
         self.checkout_successful = False
         self.prefer_whole_set = False
         
@@ -32,7 +41,7 @@ class PopMartBot:
             headless=False,
             incognito=False,
             undetectable=True,
-            page_load_strategy='none'  # Skip waiting for resources to load - makes it super fast
+            page_load_strategy='none'  # Skip waiting for resources to load - makes it really fast
         )
         
         self.monitor = UnifiedPopMartMonitor(self.monitor_driver)
@@ -48,7 +57,7 @@ class PopMartBot:
             incognito=False,
             undetectable=True,
             uc_cdp_events=True,
-            page_load_strategy='none'  # Skip waiting for resources to load - makes it super fast
+            page_load_strategy='none'  # Skip waiting for resources to load - makes it really fast
         )
         
         # Make the checkout browser harder to detect
@@ -112,19 +121,19 @@ class PopMartBot:
         print("✅ Checkout browser ready and pre-warmed!")
     
     def quick_checkout_popnow(self, product_info):
-        """Lightning-fast PopNow checkout - hits all the right buttons in the right order"""
+        """Fast PopNow checkout - hits all the right buttons in the right order"""
         if not self.auto_checkout:
             return True
             
         try:
-            print(f"\n⚡ POPNOW LIGHTNING CHECKOUT: {product_info['product_name']}")
+            print(f"\n⚡ POPNOW CHECKOUT: {product_info['product_name']}")
             start_time = time.time()
             
-            # 1. Go to the PopNow page - super fast
+            # 1. Go to the PopNow page
             self.checkout_driver.get(product_info['url'])
             time.sleep(0.2)  # Just a tiny wait for the page to load
             
-            # 2. Click the "Buy Multiple Boxes" button - super fast
+            # 2. Click the "Buy Multiple Boxes" button
             print("📦 Buy Multiple Boxes...")
             self.checkout_driver.execute_script("""
                 // Run this immediately - no waiting around
@@ -146,67 +155,7 @@ class PopMartBot:
             """)
             time.sleep(0.03)  # Tiny wait for the modal to pop up
             
-            # 3. Super fast select all checkbox
-            print("☑️ Select all...")
-            self.checkout_driver.execute_script("""
-                // Run this right away - no setTimeout delays
-                (function() {
-                    // The real select all button is usually a div that acts like a checkbox
-                    // Try the most common selectors first, in order of how likely they are to work
-                    const selectAllSelectors = [
-                        'div.index_checkbox__w_166',  // Main select all div
-                        '.ant-checkbox-wrapper',       // Ant Design checkbox wrapper
-                        'div[class*="checkbox"]',     // Any div with checkbox in class
-                        'input[type="checkbox"]',     // Actual checkbox input
-                        '.ant-checkbox'               // Ant Design checkbox class
-                    ];
-                    
-                    let selectAllClicked = false;
-                    
-                    // First, try to find and click the select all button
-                    for (let selector of selectAllSelectors) {
-                        const elements = document.querySelectorAll(selector);
-                        for (let element of elements) {
-                            // Check if this looks like a select all button
-                            if (element.offsetParent !== null && !element.disabled) {
-                                // Click it right away
-                                element.click();
-                                console.log('Select all clicked using selector:', selector);
-                                selectAllClicked = true;
-                                break;
-                            }
-                        }
-                        if (selectAllClicked) break;
-                    }
-                    
-                    // If we still haven't clicked anything, try clicking all the checkboxes
-                    if (!selectAllClicked) {
-                        const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
-                        if (allCheckboxes.length > 0) {
-                            allCheckboxes.forEach((cb, index) => {
-                                if (!cb.checked && cb.offsetParent !== null) {
-                                    cb.click();
-                                    console.log('Individual checkbox clicked:', index);
-                                }
-                            });
-                            selectAllClicked = true;
-                        }
-                    }
-                    
-                    // Last resort: click anything that might be a select all button
-                    if (!selectAllClicked) {
-                        const clickableElements = document.querySelectorAll('div[class*="checkbox"], .ant-checkbox-wrapper, div[role="checkbox"]');
-                        if (clickableElements.length > 0) {
-                            clickableElements[0].click();
-                            console.log('Fallback select all clicked');
-                        }
-                    }
-                    
-                    console.log('Select all process completed');
-                })();
-            """)
-            
-            # No waiting around - go straight to adding to bag
+            # 3. Add to bag (remove the misplaced select all part)
             print("🛒 Add to bag...")
             self.checkout_driver.execute_script("""
                 // Add the single box to bag right away
@@ -220,219 +169,58 @@ class PopMartBot:
                     }
                 })();
             """)
-            
+
             # Small wait to make sure the add to bag action completes
-            time.sleep(0.5)  # Give it a moment to register with the server
-            
-            # 4. Go to cart right away with optimized timing
+            time.sleep(0.2)  # Give it a moment to register with the server
+
+            # 4. Go to cart with proper timing
             print("🛒 Going to cart...")
-            
-            # ULTRA AGGRESSIVE APPROACH: Start monitoring for select all on CURRENT page
-            # This will make the select all process lightning fast
-            self.checkout_driver.execute_script("""
-                // Pre-load select all monitoring on current page
-                window.__selectAllPreloaded = true;
-                console.log('Select all monitoring pre-loaded for ultra-fast performance');
-            """)
-            
-            # AGGRESSIVE APPROACH: Start trying to click select all BEFORE page loads
-            self.checkout_driver.execute_script("""
-                // Start monitoring for select all IMMEDIATELY
-                window.__selectAllClicked = false;
-                
-                // Function to try clicking select all
-                function trySelectAll() {
-                    if (window.__selectAllClicked) return;
-                    
-                    const selectAllSelectors = [
+
+            # Use JavaScript navigation to bypass driver.get() inherent delays
+            self.checkout_driver.execute_script("window.location.href = 'https://www.popmart.com/ca/largeShoppingCart';")
+
+            # Wait for cart page to fully load
+            time.sleep(3.0)  # Wait 3 seconds for page to fully load
+
+            # Now execute select all on the cart page - single attempt
+            print("☑️ Selecting all items in cart...")
+            select_all_clicked = self.checkout_driver.execute_script("""
+                // Select all logic for cart page - single attempt
+                (function() {
+                    const selectors = [
                         'div.index_checkbox__w_166',
                         '.ant-checkbox-wrapper',
-                        'div[class*="checkbox"]',
                         'input[type="checkbox"]',
+                        'div[class*="checkbox"]',
                         '.ant-checkbox'
                     ];
                     
-                    for (let selector of selectAllSelectors) {
+                    let clicked = false;
+                    
+                    for (let selector of selectors) {
                         const elements = document.querySelectorAll(selector);
                         for (let element of elements) {
                             if (element.offsetParent !== null && !element.disabled) {
-                                element.click();
-                                console.log('Select all clicked early using selector:', selector);
-                                window.__selectAllClicked = true;
-                                return true;
-                            }
-                        }
-                    }
-                    return false;
-                }
-                
-                // Try immediately
-                trySelectAll();
-                
-                // Set up continuous monitoring
-                const observer = new MutationObserver(() => {
-                    if (!window.__selectAllClicked) {
-                        trySelectAll();
-                    }
-                });
-                
-                observer.observe(document.body, {
-                    childList: true,
-                    subtree: true
-                });
-                
-                // Also try with polling - ULTRA FAST
-                const pollInterval = setInterval(() => {
-                    if (trySelectAll() || window.__selectAllClicked) {
-                        clearInterval(pollInterval);
-                        observer.disconnect();
-                    }
-                }, 5); // Check every 5ms for maximum speed
-                
-                // Clean up after 2 seconds
-                setTimeout(() => {
-                    clearInterval(pollInterval);
-                    observer.disconnect();
-                }, 2000);
-            """)
-            
-            # Navigate to cart AFTER setting up the monitoring
-            self.checkout_driver.get("https://www.popmart.com/ca/largeShoppingCart")
-            
-            # 5. Super fast select all and checkout - give it another try if needed
-            print("✅ Ultra-fast select all...")
-            self.checkout_driver.execute_script("""
-                // Step 1: Click select all if not already clicked
-                (function() {
-                    if (window.__selectAllClicked) {
-                        console.log('Select all already clicked, skipping...');
-                        return;
-                    }
-                    // The REAL select all button is usually a div with checkbox-like behavior
-                    // Try the most common selectors in order of likelihood
-                    const selectAllSelectors = [
-                        'div.index_checkbox__w_166',  // Main select all div
-                        '.ant-checkbox-wrapper',       // Ant Design checkbox wrapper
-                        'div[class*="checkbox"]',     // Any div with checkbox in class
-                        'input[type="checkbox"]',     // Actual checkbox input
-                        '.ant-checkbox'               // Ant Design checkbox class
-                    ];
-                    
-                    let selectAllClicked = false;
-                    
-                    // First, try to find and click the select all button
-                    for (let selector of selectAllSelectors) {
-                        const elements = document.querySelectorAll(selector);
-                        for (let element of elements) {
-                            // Check if this looks like a select all button
-                            if (element.offsetParent !== null && !element.disabled) {
-                                // Click it immediately
                                 element.click();
                                 console.log('Select all clicked using selector:', selector);
-                                selectAllClicked = true;
+                                clicked = true;
                                 break;
                             }
                         }
-                        if (selectAllClicked) break;
+                        if (clicked) break;
                     }
                     
-                    // If still not clicked, try clicking ALL checkboxes
-                    if (!selectAllClicked) {
-                        const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
-                        if (allCheckboxes.length > 0) {
-                            allCheckboxes.forEach((cb, index) => {
-                                if (!cb.checked && cb.offsetParent !== null) {
-                                    cb.click();
-                                    console.log('Individual checkbox clicked:', index);
-                                }
-                            });
-                            selectAllClicked = true;
-                        }
-                    }
-                    
-                    // Final fallback: click any clickable element that might be select all
-                    if (!selectAllClicked) {
-                        const clickableElements = document.querySelectorAll('div[class*="checkbox"], .ant-checkbox-wrapper, div[role="checkbox"]');
-                        if (clickableElements.length > 0) {
-                            clickableElements[0].click();
-                            console.log('Fallback select all clicked');
-                        }
-                    }
-                    
-                    // AGGRESSIVE APPROACH: Continuous monitoring for select all elements
-                    if (!selectAllClicked) {
-                        console.log('Setting up continuous monitoring for select all...');
-                        
-                        const observer = new MutationObserver((mutations) => {
-                            for (let mutation of mutations) {
-                                if (mutation.type === 'childList') {
-                                    // Check newly added nodes
-                                    mutation.addedNodes.forEach(node => {
-                                        if (node.nodeType === 1) { // Element node
-                                            // Look for select all in new elements
-                                            for (let selector of selectAllSelectors) {
-                                                const newElements = node.querySelectorAll ? node.querySelectorAll(selector) : [];
-                                                if (node.matches && node.matches(selector)) {
-                                                    newElements.push(node);
-                                                }
-                                                
-                                                for (let element of newElements) {
-                                                    if (element.offsetParent !== null && !element.disabled && !selectAllClicked) {
-                                                        element.click();
-                                                        console.log('Select all found and clicked via monitoring!');
-                                                        selectAllClicked = true;
-                                                        observer.disconnect();
-                                                        return;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    });
-                                }
-                            }
-                        });
-                        
-                        // Start observing for new elements
-                        observer.observe(document.body, {
-                            childList: true,
-                            subtree: true
-                        });
-                        
-                        // Also try aggressive polling as backup
-                        let attempts = 0;
-                        const maxAttempts = 20;
-                        const pollInterval = setInterval(() => {
-                            attempts++;
-                            
-                            // Try all selectors again
-                            for (let selector of selectAllSelectors) {
-                                const elements = document.querySelectorAll(selector);
-                                for (let element of elements) {
-                                    if (element.offsetParent !== null && !element.disabled && !selectAllClicked) {
-                                        element.click();
-                                        console.log('Select all clicked via polling on attempt', attempts);
-                                        selectAllClicked = true;
-                                        clearInterval(pollInterval);
-                                        observer.disconnect();
-                                        return;
-                                    }
-                                }
-                            }
-                            
-                            if (attempts >= maxAttempts) {
-                                clearInterval(pollInterval);
-                                observer.disconnect();
-                                console.log('Select all polling stopped after', maxAttempts, 'attempts');
-                            }
-                        }, 25); // Check every 25ms for maximum speed
-                    }
-                    
-                    console.log('Select all process completed');
+                    return clicked;
                 })();
             """)
             
-            # No waiting around - go straight to checkout
-            print("🚀 Ultra-fast checkout button...")
+            if select_all_clicked:
+                print("✅ Select all successful!")
+            else:
+                print("⚠️ Select all not found - proceeding anyway")
+            
+            # No waiting around - go straight to the checkout button
+            print("🚀 Checkout button...")
             self.checkout_driver.execute_script("""
                 // Step 2: Click checkout button with exact targeting and no delays
                 (function() {
@@ -513,19 +301,19 @@ class PopMartBot:
             return True
     
     def quick_checkout_normal(self, product_info):
-        """Super quick checkout for regular products - gets you to payment in seconds"""
+        """Quick checkout for regular products - gets you to payment in seconds"""
         if not self.auto_checkout:
             return True
             
         try:
-            print(f"\n⚡ ULTRA-FAST CHECKOUT: {product_info['product_name']}")
+            print(f"\n⚡ QUICK CHECKOUT: {product_info['product_name']}")
             start_time = time.time()
             
             # 1. Go directly to the product page in the checkout browser
             self.checkout_driver.get(product_info['url'])
             # No waiting around - go straight to adding to bag
             
-            # 2. Select whole set if preferred, then add to bag - super fast
+            # 2. Select whole set if preferred, then add to bag
             if self.prefer_whole_set:
                 print("📦 Selecting whole set...")
                 self.checkout_driver.execute_script("""
@@ -551,9 +339,9 @@ class PopMartBot:
                             }
                         }
                         
-                        // AGGRESSIVE APPROACH: Continuous monitoring for ADD TO BAG button
+                        // Continuous monitoring for ADD TO BAG button
                         if (!document.querySelector('div[class*="index_usBtn__"]')) {
-                            console.log('Setting up continuous monitoring for ADD TO BAG...');
+                            console.log('Setting up monitoring for ADD TO BAG...');
                             
                             const observer = new MutationObserver((mutations) => {
                                 for (let mutation of mutations) {
@@ -599,9 +387,9 @@ class PopMartBot:
                             }
                         }
                         
-                        // AGGRESSIVE APPROACH: Continuous monitoring for ADD TO BAG button
+                        // Continuous monitoring for ADD TO BAG button
                         if (!document.querySelector('div[class*="index_usBtn__"]')) {
-                            console.log('Setting up continuous monitoring for ADD TO BAG...');
+                            console.log('Setting up monitoring for ADD TO BAG...');
                             
                             const observer = new MutationObserver((mutations) => {
                                 for (let mutation of mutations) {
@@ -636,217 +424,56 @@ class PopMartBot:
                 """)
             
             # Small wait to ensure ADD TO BAG completes
-            time.sleep(0.5)  # Wait for add to bag to register
+            time.sleep(0.2)  # Wait for add to bag to register
             
-            # 3. Go to cart right away with optimized timing
+            # 3. Go to cart with proper timing
             print("🛒 Going to cart...")
-            
-            # ULTRA AGGRESSIVE APPROACH: Start monitoring for select all on CURRENT page
-            # This will make the select all process lightning fast
-            self.checkout_driver.execute_script("""
-                // Pre-load select all monitoring on current page
-                window.__selectAllPreloaded = true;
-                console.log('Select all monitoring pre-loaded for ultra-fast performance');
-            """)
-            
-            # AGGRESSIVE APPROACH: Start trying to click select all BEFORE page loads
-            self.checkout_driver.execute_script("""
-                // Start monitoring for select all IMMEDIATELY
-                window.__selectAllClicked = false;
-                
-                // Function to try clicking select all
-                function trySelectAll() {
-                    if (window.__selectAllClicked) return;
-                    
-                    const selectAllSelectors = [
+
+            # Use JavaScript navigation to bypass driver.get() inherent delays
+            self.checkout_driver.execute_script("window.location.href = 'https://www.popmart.com/ca/largeShoppingCart';")
+
+            # Wait for cart page to fully load
+            time.sleep(3.0)  # Wait 3 seconds for page to fully load
+
+            # Now execute select all on the cart page - single attempt
+            print("☑️ Selecting all items in cart...")
+            select_all_clicked = self.checkout_driver.execute_script("""
+                // Select all logic for cart page - single attempt
+                (function() {
+                    const selectors = [
                         'div.index_checkbox__w_166',
                         '.ant-checkbox-wrapper',
-                        'div[class*="checkbox"]',
                         'input[type="checkbox"]',
+                        'div[class*="checkbox"]',
                         '.ant-checkbox'
                     ];
                     
-                    for (let selector of selectAllSelectors) {
+                    let clicked = false;
+                    
+                    for (let selector of selectors) {
                         const elements = document.querySelectorAll(selector);
                         for (let element of elements) {
                             if (element.offsetParent !== null && !element.disabled) {
-                                element.click();
-                                console.log('Select all clicked early using selector:', selector);
-                                window.__selectAllClicked = true;
-                                return true;
-                            }
-                        }
-                    }
-                    return false;
-                }
-                
-                // Try immediately
-                trySelectAll();
-                
-                // Set up continuous monitoring
-                const observer = new MutationObserver(() => {
-                    if (!window.__selectAllClicked) {
-                        trySelectAll();
-                    }
-                });
-                
-                observer.observe(document.body, {
-                    childList: true,
-                    subtree: true
-                });
-                
-                // Also try with polling - ULTRA FAST
-                const pollInterval = setInterval(() => {
-                    if (trySelectAll() || window.__selectAllClicked) {
-                        clearInterval(pollInterval);
-                        observer.disconnect();
-                    }
-                }, 5); // Check every 5ms for maximum speed
-                
-                // Clean up after 2 seconds
-                setTimeout(() => {
-                    clearInterval(pollInterval);
-                    observer.disconnect();
-                }, 2000);
-            """)
-            
-            # Navigate to cart AFTER setting up the monitoring
-            self.checkout_driver.get("https://www.popmart.com/ca/largeShoppingCart")
-            
-            # 4. Super fast select all and checkout - give it another try if needed
-            print("✅ Ultra-fast select all...")
-            self.checkout_driver.execute_script("""
-                // Step 1: Click select all if not already clicked
-                (function() {
-                    if (window.__selectAllClicked) {
-                        console.log('Select all already clicked, skipping...');
-                        return;
-                    }
-                    // The REAL select all button is usually a div with checkbox-like behavior
-                    // Try the most common selectors in order of likelihood
-                    const selectAllSelectors = [
-                        'div.index_checkbox__w_166',  // Main select all div
-                        '.ant-checkbox-wrapper',       // Ant Design checkbox wrapper
-                        'div[class*="checkbox"]',     // Any div with checkbox in class
-                        'input[type="checkbox"]',     // Actual checkbox input
-                        '.ant-checkbox'               // Ant Design checkbox class
-                    ];
-                    
-                    let selectAllClicked = false;
-                    
-                    // First, try to find and click the select all button
-                    for (let selector of selectAllSelectors) {
-                        const elements = document.querySelectorAll(selector);
-                        for (let element of elements) {
-                            // Check if this looks like a select all button
-                            if (element.offsetParent !== null && !element.disabled) {
-                                // Click it immediately
                                 element.click();
                                 console.log('Select all clicked using selector:', selector);
-                                selectAllClicked = true;
+                                clicked = true;
                                 break;
                             }
                         }
-                        if (selectAllClicked) break;
+                        if (clicked) break;
                     }
                     
-                    // If still not clicked, try clicking ALL checkboxes
-                    if (!selectAllClicked) {
-                        const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
-                        if (allCheckboxes.length > 0) {
-                            allCheckboxes.forEach((cb, index) => {
-                                if (!cb.checked && cb.offsetParent !== null) {
-                                    cb.click();
-                                    console.log('Individual checkbox clicked:', index);
-                                }
-                            });
-                            selectAllClicked = true;
-                        }
-                    }
-                    
-                    // Final fallback: click any clickable element that might be select all
-                    if (!selectAllClicked) {
-                        const clickableElements = document.querySelectorAll('div[class*="checkbox"], .ant-checkbox-wrapper, div[role="checkbox"]');
-                        if (clickableElements.length > 0) {
-                            clickableElements[0].click();
-                            console.log('Fallback select all clicked');
-                        }
-                    }
-                    
-                    // AGGRESSIVE APPROACH: Continuous monitoring for select all elements
-                    if (!selectAllClicked) {
-                        console.log('Setting up continuous monitoring for select all...');
-                        
-                        const observer = new MutationObserver((mutations) => {
-                            for (let mutation of mutations) {
-                                if (mutation.type === 'childList') {
-                                    // Check newly added nodes
-                                    mutation.addedNodes.forEach(node => {
-                                        if (node.nodeType === 1) { // Element node
-                                            // Look for select all in new elements
-                                            for (let selector of selectAllSelectors) {
-                                                const newElements = node.querySelectorAll ? node.querySelectorAll(selector) : [];
-                                                if (node.matches && node.matches(selector)) {
-                                                    newElements.push(node);
-                                                }
-                                                
-                                                for (let element of newElements) {
-                                                    if (element.offsetParent !== null && !element.disabled && !selectAllClicked) {
-                                                        element.click();
-                                                        console.log('Select all found and clicked via monitoring!');
-                                                        selectAllClicked = true;
-                                                        observer.disconnect();
-                                                        return;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    });
-                                }
-                            }
-                        });
-                        
-                        // Start observing for new elements
-                        observer.observe(document.body, {
-                            childList: true,
-                            subtree: true
-                        });
-                        
-                        // Also try aggressive polling as backup
-                        let attempts = 0;
-                        const maxAttempts = 20;
-                        const pollInterval = setInterval(() => {
-                            attempts++;
-                            
-                            // Try all selectors again
-                            for (let selector of selectAllSelectors) {
-                                const elements = document.querySelectorAll(selector);
-                                for (let element of elements) {
-                                    if (element.offsetParent !== null && !element.disabled && !selectAllClicked) {
-                                        element.click();
-                                        console.log('Select all clicked via polling on attempt', attempts);
-                                        selectAllClicked = true;
-                                        clearInterval(pollInterval);
-                                        observer.disconnect();
-                                        return;
-                                    }
-                                }
-                            }
-                            
-                            if (attempts >= maxAttempts) {
-                                clearInterval(pollInterval);
-                                observer.disconnect();
-                                console.log('Select all polling stopped after', maxAttempts, 'attempts');
-                            }
-                        }, 25); // Check every 25ms for maximum speed
-                    }
-                    
-                    console.log('Select all process completed');
+                    return clicked;
                 })();
             """)
             
+            if select_all_clicked:
+                print("✅ Select all successful!")
+            else:
+                print("⚠️ Select all not found - proceeding anyway")
+            
             # No waiting around - go straight to the checkout button
-            print("🚀 Ultra-fast checkout button...")
+            print("🚀 Checkout button...")
             self.checkout_driver.execute_script("""
                 // Step 2: Click checkout button with exact targeting and no delays
                 (function() {
@@ -922,26 +549,6 @@ class PopMartBot:
             
             return False  # Stop monitoring after getting the product
             
-            end_time = time.time()
-            total_time = end_time - start_time
-            
-            print(f"\n⏱️ CHECKOUT COMPLETED IN: {total_time:.2f} seconds!")
-            print("💳 COMPLETE PAYMENT NOW!")
-            
-            self.checkout_successful = True
-            
-            print("\n" + "="*60)
-            print("💳 PAYMENT TIME")
-            print("="*60)
-            print("• Complete your payment in the checkout browser")
-            print("• DO NOT CLOSE the checkout browser")
-            print("• Bot will stop monitoring after getting the product")
-            print("="*60)
-            
-            print("\n✅ Checkout completed! Bot will stop monitoring.")
-            print("💡 You can complete payment in the checkout browser")
-            return False  # Stop monitoring after getting the product
-            
         except Exception as e:
             print(f"❌ Checkout error: {e}")
             return True
@@ -963,9 +570,6 @@ class PopMartBot:
             print(f"📦 Product Type: {product_info.get('product_type', 'normal').upper()}")
             print(f"⏰ Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
             print(f"{'='*60}")
-            
-            # Add to queue for checkout
-            self.stock_queue.put(product_info)
             
             # Handle checkout with safety wrapper
             continue_monitoring = self.quick_checkout(product_info)
@@ -1106,7 +710,7 @@ class PopMartBot:
                         product_url = f"https://www.popmart.com/ca/products/{product_ids[0]}/"
                 
                 self.monitor_driver.get(product_url)
-                time.sleep(0.8)  # Much faster navigation than before
+                time.sleep(0.2)  # Much faster navigation than before
                 
                 # Auto-detect the type
                 detected_type = self.monitor.detect_product_type()

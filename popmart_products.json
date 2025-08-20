@@ -1,30 +1,37 @@
 {
   "2710": {
     "name": "THE MONSTERS Big into Energy Series",
-    "url": "https://www.popmart.com/ca/products/2710/"
+    "url": "https://www.popmart.com/ca/products/2710/",
+    "type": "normal"
   },
   "3189": {
     "name": "HIRONO Reshape Series Figures",
-    "url": "https://www.popmart.com/ca/products/3189/"
+    "url": "https://www.popmart.com/ca/products/3189/",
+    "type": "normal"
   },
   "3501": {
     "name": "Baby Molly & Baby Tabby Series Figures",
-    "url": "https://www.popmart.com/ca/products/3501/"
+    "url": "https://www.popmart.com/ca/products/3501/",
+    "type": "normal"
   },
   "2088": {
     "name": "THE MONSTERS Let's Checkmate Series-Vinyl Plush Doll",
-    "url": "https://www.popmart.com/ca/products/2088/"
+    "url": "https://www.popmart.com/ca/products/2088/",
+    "type": "normal"
   },
   "293": {
     "name": "THE MONSTERS - Exciting Macaron Vinyl Face Blind Box",
-    "url": "https://www.popmart.com/ca/pop-now/set/293"
+    "url": "https://www.popmart.com/ca/pop-now/set/293",
+    "type": "popnow"
   },
   "170": {
     "name": "THE MONSTERRS Let's Checkmate Series-Fridge Magnet Blind Box",
-    "url": "https://www.popmart.com/ca/pop-now/set/170"
+    "url": "https://www.popmart.com/ca/pop-now/set/170",
+    "type": "popnow"
   },
   "3566": {
     "name": "LABUBU Summerr Ride Figure",
-    "url": "https://www.popmart.com/ca/products/3566"
+    "url": "https://www.popmart.com/ca/products/3566",
+    "type": "normal"
   }
 }
